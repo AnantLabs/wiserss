@@ -1,0 +1,7 @@
+D:\wiserss\src\application\WiseRSS\DataAccess\bin\Debug\DataAccess.dll
+D:\wiserss\src\application\WiseRSS\DataAccess\bin\Debug\DataAccess.pdb
+D:\wiserss\src\application\WiseRSS\DataAccess\bin\Debug\CrossCutting.dll
+D:\wiserss\src\application\WiseRSS\DataAccess\bin\Debug\CrossCutting.pdb
+D:\wiserss\src\application\WiseRSS\DataAccess\obj\Debug\ResolveAssemblyReference.cache
+D:\wiserss\src\application\WiseRSS\DataAccess\obj\Debug\DataAccess.dll
+D:\wiserss\src\application\WiseRSS\DataAccess\obj\Debug\DataAccess.pdb

@@ -1,0 +1,11 @@
+D:\wiserss\src\application\WiseRSS\WiseService\bin\Debug\WiseService.exe
+D:\wiserss\src\application\WiseRSS\WiseService\bin\Debug\WiseService.pdb
+D:\wiserss\src\application\WiseRSS\WiseService\bin\Debug\Business.dll
+D:\wiserss\src\application\WiseRSS\WiseService\bin\Debug\CrossCutting.dll
+D:\wiserss\src\application\WiseRSS\WiseService\bin\Debug\DataAccess.dll
+D:\wiserss\src\application\WiseRSS\WiseService\bin\Debug\Business.pdb
+D:\wiserss\src\application\WiseRSS\WiseService\bin\Debug\CrossCutting.pdb
+D:\wiserss\src\application\WiseRSS\WiseService\bin\Debug\DataAccess.pdb
+D:\wiserss\src\application\WiseRSS\WiseService\obj\x86\Debug\ResolveAssemblyReference.cache
+D:\wiserss\src\application\WiseRSS\WiseService\obj\x86\Debug\WiseService.exe
+D:\wiserss\src\application\WiseRSS\WiseService\obj\x86\Debug\WiseService.pdb
