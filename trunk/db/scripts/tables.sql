@@ -1,45 +1,165 @@
+create database if not exists wiserss;
+use wiserss;
+
 drop table if exists rss_channels;
 CREATE TABLE rss_channels (
-  id int(11) NOT NULL auto_increment,
-  title text NOT NULL,
-  description mediumtext NOT NULL,
-  link text NOT NULL,
-  published_date date,
-  favorite tinyint(1),
-  PRIMARY KEY (id)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+  id int unsigned NOT NULL AUTO_INCREMENT,
+  category_id INT UNSIGNED COMMENT 'Specify one or more categories that the channel belongs to',
+  cloud_id INT UNSIGNED COMMENT 'Allows processes to register with a cloud to be notified of updates to the channel,
+                                 implementing a lightweight publish-subscribe protocol for RSS feeds',
+  copyright TEXT COMMENT 'Copyright notice for content in the channel.',
+  description MEDIUMTEXT NOT NULL COMMENT 'Phrase or sentence describing the channel',
+  docs VARCHAR(255) COMMENT 'A URL that points to the documentation for the format used in the RSS file',
+  generator VARCHAR(255) COMMENT 'A string indicating the program used to generate the channel',
+  /* rss_channel_images - 'Specifies a GIF, JPEG or PNG image that can be displayed with the channel' */
+  language_id INT UNSIGNED COMMENT 'The language the channel is written in',
+  last_build_date DATETIME COMMENT 'The last time the content of the channel changed',
+  link TEXT NOT NULL COMMENT 'The URL to the HTML website corresponding to the channel',
+  managing_editor TEXT COMMENT 'Email address for person responsible for editorial content',
+  publication_date DATETIME COMMENT 'The publication date for the content in the channel',
+  rating VARCHAR(255) COMMENT 'The PICS rating for the channel',
+  /* skip_days  - 'A hint for aggregators telling them which hours they can skip'
+     skip_hours - 'A hint for aggregators telling them which days  they can skip' */
+  text_input_id INT UNSIGNED COMMENT 'Specifies a text input box that can be displayed with the channel',
+  title TEXT NOT NULL COMMENT 'The name of the channel. Its how people refer to service',
+  ttl INT UNSIGNED COMMENT 'Number of minutes that indicates how long a channel can be cached before refreshing from the source',
+  webmaster TEXT COMMENT 'Email address for person responsible for technical issues relating to channel',
+  favorite TINYINT(1) UNSIGNED COMMENT 'Specifies if the channel is favorite (1=favorite)',
+  count INTEGER NOT NULL COMMENT '',
+  PRIMARY KEY (id),
+  CONSTRAINT FK_category_id FOREIGN KEY (category_id) REFERENCES categories(id)
+  ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT FK_cloud_id FOREIGN KEY (cloud_id) REFERENCES clouds(id)
+  ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT FK_language_id FOREIGN KEY (language_id) REFERENCES languages(id)
+  ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT FK_text_input_id FOREIGN KEY (text_input_id) REFERENCES text_inputs(id)
+  ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT '';
 
+/* A channel may contain any number of <item>s.
+   An item may represent a "story" -- much like a story in a newspaper
+   or magazine; if so its description is a synopsis of the story,
+   and the link points to the full story.
+   An item may also be complete in itself, if so, the description
+   contains the text (entity-encoded HTML is allowed; see examples),
+  and the link and title may be omitted. All elements of an item are optional,
+  however at least one of title or description must be present.
+ */
 drop table if exists rss_items;
 CREATE TABLE rss_items (
-  id int(11) NOT NULL auto_increment,
-  rss_id int(11) NOT NULL,
-  title text NOT NULL,
-  category_id int(11),
-  description mediumtext NOT NULL,
-  link text,
+  id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  channel_id INT UNSIGNED NOT NULL,
+  author VARCHAR(255) COMMENT 'Email address of the author of the item',
+  category_id INT UNSIGNED COMMENT 'Includes the item in one or more categories',
+  comments TEXT COMMENT 'Allows an item to link to comments about that item',
+  description MEDIUMTEXT NOT NULL COMMENT 'The item synopsis',
+  enclosure_id INT UNSIGNED COMMENT 'Describes a media object that is attached to the item',
+  guid TEXT COMMENT 'A string that uniquely identifies the item',
+  link TEXT COMMENT 'The URL of the item',
+  source TEXT COMMENT 'The RSS channel that the item came from',
+  publication_date DATETIME COMMENT 'Indicates when the item was published',
+  title TEXT NOT NULL COMMENT 'The title of the item',
   PRIMARY KEY (id),
-  CONSTRAINT rss_id
-  FOREIGN KEY (rss_id)
-  REFERENCES rss_channels(rss_id)
-  ON DELETE CASCADE
+  INDEX item_idx(id),
+  INDEX channel_idx(channel_id),
+  INDEX category_idx(category_id),
+  INDEX enclosure_idx(enclosure_id),
+  CONSTRAINT FK_channel_id FOREIGN KEY (channel_id) REFERENCES rss_channels(id)
+  ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT FK_category FOREIGN KEY (category_id) REFERENCES categories(id)
+  ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT FK_enclosure_id FOREIGN KEY (enclosure_id) REFERENCES enclosures(id)
+  ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 drop table if exists categories;
 CREATE TABLE categories (
-  id int(11) NOT NULL auto_increment,
-  name text NOT NULL,
-  PRIMARY KEY (id)
+  id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  name VARCHAR(255) NOT NULL,
+  PRIMARY KEY (id),
+  INDEX categories_idx(id),
+  INDEX categories_name_idx(name)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
-drop table if exists rss_images;
-CREATE TABLE rss_images (
-  id int(11) NOT NULL auto_increment,
-  rssitem_id int(11) NOT NULL,
-  image blob,
+drop table if exists skip_time;
+CREATE TABLE skip_time (
+  id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  rss_channel_id INT UNSIGNED NOT NULL,
+  value tinyint(5) NOT NULL COMMENT 'Specifies the hours between 0 and 23 or days from 0 (Monday) to 6 (Sunday)',
+  type tinyint(1) NOT NULL COMMENT 'if type=1 than alueis skipHours, otherwise alueis skipDays',
   PRIMARY KEY (id),
-  CONSTRAINT rss_id
-  FOREIGN KEY (rssitem_id)
-  REFERENCES rss_items(rssitem_id)
-  ON DELETE CASCADE
+  INDEX skip_time_idx(id),
+  CONSTRAINT FK_rss_channel_id FOREIGN KEY (rss_channel_id) REFERENCES rss_channels(id)
+  ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+drop table if exists clouds;
+CREATE TABLE clouds (
+  id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  domain TEXT NOT NULL,
+  port SMALLINT unsigned NOT NULL,
+  path TEXT NOT NULL,
+  register_procedure TEXT NOT NULL,
+  protocol TEXT NOT NULL,
+  PRIMARY KEY (id),
+  INDEX clouds_idx(id)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+drop table if exists languages;
+CREATE TABLE languages (
+  id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  identifier VARCHAR(5) NOT NULL,
+  language VARCHAR(64),
+  PRIMARY KEY (id),
+  INDEX languages_idx(id),
+  INDEX indentifier_idx(identifier),
+  INDEX language_idx(language)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+
+/* The purpose of the <textInput> element is something of a mystery.
+ *  You can use it to specify a search engine box.
+ *  Or to allow a reader to provide feedback. Most aggregators ignore it.
+ */
+drop table if exists text_inputs;
+CREATE TABLE text_inputs (
+  id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  description VARCHAR(255) NOT NULL COMMENT 'Explains the text input area',
+  name VARCHAR(255) NOT NULL COMMENT 'The name of the text object in the text input area',
+  link VARCHAR(255) NOT NULL COMMENT 'The URL of the CGI script that processes text input requests',
+  title VARCHAR(255) NOT NULL COMMENT 'The label of the Submit button in the text input area.',
+  PRIMARY KEY (id),
+  INDEX text_inputs_idx(id)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+drop table if exists rss_channel_images;
+CREATE TABLE rss_channel_images (
+  id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  rss_channel_id INT UNSIGNED NOT NULL,
+  url TEXT COMMENT 'Defines the URL to the image',
+  title VARCHAR(255) COMMENT 'Defines the text to display if the image could not be shown',
+  link TEXT COMMENT 'Defines the hyperlink to the website that offers the channel',
+  image BLOB NOT NULL,
+  PRIMARY KEY (id),
+  INDEX rss_channel_images_idx(id, rss_channel_id),
+  CONSTRAINT FK_rss_channel_id FOREIGN KEY (rss_channel_id) REFERENCES rss_channels(id)
+  ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+/* files included in an item */
+drop table if exists enclosures;
+CREATE TABLE enclosures (
+  id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  rss_item_id INT UNSIGNED NOT NULL,
+  length INT UNSIGNED NOT NULL COMMENT 'Defines the length (in bytes) of the media file',
+  type VARCHAR(255) NOT NULL COMMENT 'Defines the MIME type of media file',
+  url TEXT NOT NULL COMMENT 'Defines the URL to the media file',
+  file BLOB NOT NULL,
+  PRIMARY KEY (id),
+  INDEX enclosures_idx(id),
+  INDEX rss_item_images_idx(id, rss_item_id),
+  CONSTRAINT FK_rss_item_id FOREIGN KEY (rss_item_id) REFERENCES rss_items(id)
+  ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
