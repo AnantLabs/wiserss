@@ -31,6 +31,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="RSS.NET, Version=0.86.20.60711, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\references\RSS.NET.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -40,14 +43,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="RssChannelService.cs" />
+    <Compile Include="RssService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\CrossCutting\CrossCutting.csproj">
-      <Project>{BC7A347A-C7BA-4716-B066-A1CC6FF1E2CB}</Project>
-      <Name>CrossCutting</Name>
-    </ProjectReference>
     <ProjectReference Include="..\DataAccess\DataAccess.csproj">
       <Project>{AE5AE9DA-2DB8-48FD-A7AA-FED1F31D0402}</Project>
       <Name>DataAccess</Name>

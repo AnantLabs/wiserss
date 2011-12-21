@@ -58,10 +58,6 @@
       <Project>{C08AE099-10AA-4A4C-8907-0FE955A1A878}</Project>
       <Name>Business</Name>
     </ProjectReference>
-    <ProjectReference Include="..\CrossCutting\CrossCutting.csproj">
-      <Project>{BC7A347A-C7BA-4716-B066-A1CC6FF1E2CB}</Project>
-      <Name>CrossCutting</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

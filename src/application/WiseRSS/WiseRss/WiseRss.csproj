@@ -34,6 +34,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="RSS.NET">
+      <HintPath>..\..\..\references\RSS.NET.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -54,6 +57,9 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="Form1.resx">
+      <DependentUpon>Form1.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -77,10 +83,6 @@
     <ProjectReference Include="..\Business\Business.csproj">
       <Project>{C08AE099-10AA-4A4C-8907-0FE955A1A878}</Project>
       <Name>Business</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\CrossCutting\CrossCutting.csproj">
-      <Project>{BC7A347A-C7BA-4716-B066-A1CC6FF1E2CB}</Project>
-      <Name>CrossCutting</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -1,10 +1,10 @@
-create database if not exists wiserss;
+﻿create database if not exists wiserss;
 use wiserss;
 
 drop table if exists rss_channels;
 CREATE TABLE rss_channels (
-  id int unsigned NOT NULL AUTO_INCREMENT,
-  category_id INT UNSIGNED COMMENT 'Specify one or more categories that the channel belongs to',
+  id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  /*category_id INT UNSIGNED COMMENT 'Specify one or more categories that the channel belongs to',*/
   cloud_id INT UNSIGNED COMMENT 'Allows processes to register with a cloud to be notified of updates to the channel,
                                  implementing a lightweight publish-subscribe protocol for RSS feeds',
   copyright TEXT COMMENT 'Copyright notice for content in the channel.',
@@ -18,24 +18,22 @@ CREATE TABLE rss_channels (
   managing_editor TEXT COMMENT 'Email address for person responsible for editorial content',
   publication_date DATETIME COMMENT 'The publication date for the content in the channel',
   rating VARCHAR(255) COMMENT 'The PICS rating for the channel',
-  /* skip_days  - 'A hint for aggregators telling them which hours they can skip'
-     skip_hours - 'A hint for aggregators telling them which days  they can skip' */
+  skip_days INT UNSIGNED COMMENT 'A hint for aggregators telling them which hours they can skip',
+  skip_hours INT UNSIGNED COMMENT 'A hint for aggregators telling them which days they can skip',
   text_input_id INT UNSIGNED COMMENT 'Specifies a text input box that can be displayed with the channel',
   title TEXT NOT NULL COMMENT 'The name of the channel. Its how people refer to service',
-  ttl INT UNSIGNED COMMENT 'Number of minutes that indicates how long a channel can be cached before refreshing from the source',
+  ttl INTEGER UNSIGNED COMMENT 'Number of minutes that indicates how long a channel can be cached before refreshing from the source',
   webmaster TEXT COMMENT 'Email address for person responsible for technical issues relating to channel',
-  favorite TINYINT(1) UNSIGNED COMMENT 'Specifies if the channel is favorite (1=favorite)',
-  count INTEGER NOT NULL COMMENT '',
+  favorite TINYINT(1) UNSIGNED COMMENT 'Specifies if the channel is marked as favorite (1=favorite)',
+  count SMALLINT UNSIGNED NOT NULL COMMENT '',
   PRIMARY KEY (id),
-  CONSTRAINT FK_category_id FOREIGN KEY (category_id) REFERENCES categories(id)
-  ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT FK_cloud_id FOREIGN KEY (cloud_id) REFERENCES clouds(id)
   ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT FK_language_id FOREIGN KEY (language_id) REFERENCES languages(id)
   ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT FK_text_input_id FOREIGN KEY (text_input_id) REFERENCES text_inputs(id)
   ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT '';
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 /* A channel may contain any number of <item>s.
    An item may represent a "story" -- much like a story in a newspaper
@@ -73,6 +71,21 @@ CREATE TABLE rss_items (
   ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
+drop table if exists rss_channel_categories;
+CREATE TABLE rss_channel_categories (
+  id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  category_id INT UNSIGNED NOT NULL,
+  rss_channel_id INT UNSIGNED NOT NULL,
+  PRIMARY KEY (id),
+  INDEX categories_idx(id),
+  INDEX category_idx(id),
+  INDEX rss_channel_idx(category_id),
+  CONSTRAINT FK_category FOREIGN KEY (category_id) REFERENCES categories(id)
+  ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT FK_rss_channel FOREIGN KEY (rss_channel_id) REFERENCES rss_channels(id)
+  ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
 drop table if exists categories;
 CREATE TABLE categories (
   id INT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -98,10 +111,10 @@ drop table if exists clouds;
 CREATE TABLE clouds (
   id INT UNSIGNED NOT NULL AUTO_INCREMENT,
   domain TEXT NOT NULL,
-  port SMALLINT unsigned NOT NULL,
+  port SMALLINT UNSIGNED NOT NULL,
   path TEXT NOT NULL,
   register_procedure TEXT NOT NULL,
-  protocol TEXT NOT NULL,
+  protocol TINYINT(4) UNSIGNED NOT NULL,
   PRIMARY KEY (id),
   INDEX clouds_idx(id)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
@@ -162,4 +175,3 @@ CREATE TABLE enclosures (
   CONSTRAINT FK_rss_item_id FOREIGN KEY (rss_item_id) REFERENCES rss_items(id)
   ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
-
