@@ -1,5 +1,0 @@
-D:\wiserss\src\application\WiseRSS\CrossCutting\bin\Debug\CrossCutting.dll
-D:\wiserss\src\application\WiseRSS\CrossCutting\bin\Debug\CrossCutting.pdb
-D:\wiserss\src\application\WiseRSS\CrossCutting\obj\Debug\ResolveAssemblyReference.cache
-D:\wiserss\src\application\WiseRSS\CrossCutting\obj\Debug\CrossCutting.dll
-D:\wiserss\src\application\WiseRSS\CrossCutting\obj\Debug\CrossCutting.pdb

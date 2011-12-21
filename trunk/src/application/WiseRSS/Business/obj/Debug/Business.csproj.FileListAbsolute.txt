@@ -1,9 +1,0 @@
-D:\wiserss\src\application\WiseRSS\Business\bin\Debug\Business.dll
-D:\wiserss\src\application\WiseRSS\Business\bin\Debug\Business.pdb
-D:\wiserss\src\application\WiseRSS\Business\bin\Debug\CrossCutting.dll
-D:\wiserss\src\application\WiseRSS\Business\bin\Debug\DataAccess.dll
-D:\wiserss\src\application\WiseRSS\Business\bin\Debug\CrossCutting.pdb
-D:\wiserss\src\application\WiseRSS\Business\bin\Debug\DataAccess.pdb
-D:\wiserss\src\application\WiseRSS\Business\obj\Debug\ResolveAssemblyReference.cache
-D:\wiserss\src\application\WiseRSS\Business\obj\Debug\Business.dll
-D:\wiserss\src\application\WiseRSS\Business\obj\Debug\Business.pdb
