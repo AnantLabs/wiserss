@@ -25,9 +25,9 @@ namespace Business
       return new DataReader().GetItem(id);
     }
 
-    public RssItemCollection GetItems()
+    public RssItemCollection GetItems(int channel_id)
     {
-      return new DataReader().GetItems();
+      return new DataReader().GetRssItems(channel_id);
     }
 
     public RssCategory GetCategory(int id)
@@ -50,49 +50,29 @@ namespace Business
       return new DataReader().GetLanguages();
     }
 
-    public int InsertChannel(
-      int p_cloud_id,
-      string p_copyright,
-      string p_description,
-      string p_docs,
-      string p_generator,
-      int p_language_id,
-      DateTime p_last_build_date,
-      string p_link,
-      string p_managing_editor,
-      DateTime p_publication_date,
-      string p_rating,
-      int p_skip_days,
-      int p_skip_hours,
-      int p_text_input_id,
-      string p_title,
-      int p_ttl,
-      string p_webmaster,
-      bool p_favorite,
-      int p_count
-      )
+    public bool InsertNewItems()
     {
-      return new DataReader().InsertChannel(
-       p_cloud_id,
-       p_copyright,
-       p_description,
-       p_docs,
-       p_generator,
-       p_language_id,
-       p_last_build_date,
-       p_link,
-       p_managing_editor,
-       p_publication_date,
-       p_rating,
-       p_skip_days,
-       p_skip_hours,
-       p_text_input_id,
-       p_title,
-       p_ttl,
-       p_webmaster,
-       p_favorite,
-       p_count
-      );
+        
+        string[] feeds = new DataReader().GetFeeds();
+        foreach (string feedUrl in feeds)
+        {
+            int feedId = new DataReader().GetFeedId(feedUrl);
+            RssFeed feed = Rss.RssFeed.Read(feedUrl); 
+
+            foreach (Rss.RssChannel channel in feed.Channels)
+            {
+                
+                int channelID = new DataReader().InsertRssChannel(channel, feedId);
+                foreach (Rss.RssItem item in channel.Items)
+                {
+                    new DataReader().InsertRssItem(item, channelID);
+                }
+            } 
+        }
+
+        return true;
+    
     }
+  
   }
 }

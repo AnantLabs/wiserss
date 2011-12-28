@@ -7,6 +7,9 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 
+using Rss;
+using Business;
+
 namespace WiseRss
 {
   public partial class Form1 : Form
@@ -46,23 +49,8 @@ namespace WiseRss
       }
       nodes = treeView1.Nodes["NodeChannels"].Nodes;
       TreeNode node = null;
-      Rss.RssChannelCollection channels = new Rss.RssChannelCollection();
 
-      string url = "http://feeds.bbci.co.uk/news/rss.xml";
-      Rss.RssFeed feed = Rss.RssFeed.Read(url);
-
-      foreach (Rss.RssChannel channel in feed.Channels)
-      {
-        channels.Add(channel);
-      }
-
-      url = "http://rss.cnn.com/rss/edition.rss";
-      feed = Rss.RssFeed.Read(url);
-
-      foreach (Rss.RssChannel channel in feed.Channels)
-      {
-        channels.Add(channel);
-      }
+      RssChannelCollection channels = new RssService().GetChannels();
 
       foreach (Rss.RssChannel channel in channels)
       {
@@ -71,8 +59,6 @@ namespace WiseRss
         {
           node = new TreeNode(channel.Title);
           node.ToolTipText = channel.Description.Trim();
-
-          new Business.RssService().InsertChannel(0, channel.Copyright, channel.Description, channel.Docs, channel.Generator, 0, channel.LastBuildDate, channel.Link.ToString(), channel.ManagingEditor, channel.PubDate, channel.Rating, channel.SkipDays.Code, channel.SkipHours.Code, 0, channel.Title, channel.TimeToLive, channel.WebMaster, channel.Favorite, channel.Count);
 
           TreeNode childNode = null;
 
@@ -94,5 +80,13 @@ namespace WiseRss
     {
       // TODO: form closing event
     }
+
+    private void simpleButton1_Click(object sender, EventArgs e)
+    {
+        new RssService().InsertNewItems();
+    }
+
+
+
   }
 }
