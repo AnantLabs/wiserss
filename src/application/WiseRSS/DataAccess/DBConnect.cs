@@ -23,7 +23,7 @@ namespace DataAccess
     /// </summary>
     private void Initialize()
     {
-      server   = "10.0.2.2";
+      server   = "localhost";
       database = "wiserss";
       uid      = "wiserss";
       password = "wiserss";
