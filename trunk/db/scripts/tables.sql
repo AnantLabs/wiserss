@@ -24,7 +24,7 @@ CREATE TABLE rss_channels (
   title TEXT NOT NULL COMMENT 'The name of the channel. Its how people refer to service',
   ttl INTEGER UNSIGNED COMMENT 'Number of minutes that indicates how long a channel can be cached before refreshing from the source',
   webmaster TEXT COMMENT 'Email address for person responsible for technical issues relating to channel',
-  favorite TINYINT(1) UNSIGNED COMMENT 'Specifies if the channel is marked as favorite (1=favorite)',
+  favorite BIT COMMENT 'Specifies if the channel is marked as favorite (1=favorite)',
   count SMALLINT UNSIGNED NOT NULL COMMENT '',
   PRIMARY KEY (id),
   CONSTRAINT FK_cloud_id FOREIGN KEY (cloud_id) REFERENCES clouds(id)
@@ -52,7 +52,6 @@ CREATE TABLE rss_items (
   category_id INT UNSIGNED COMMENT 'Includes the item in one or more categories',
   comments TEXT COMMENT 'Allows an item to link to comments about that item',
   description MEDIUMTEXT NOT NULL COMMENT 'The item synopsis',
-  enclosure_id INT UNSIGNED COMMENT 'Describes a media object that is attached to the item',
   guid TEXT COMMENT 'A string that uniquely identifies the item',
   link TEXT COMMENT 'The URL of the item',
   source TEXT COMMENT 'The RSS channel that the item came from',
@@ -62,12 +61,9 @@ CREATE TABLE rss_items (
   INDEX item_idx(id),
   INDEX channel_idx(channel_id),
   INDEX category_idx(category_id),
-  INDEX enclosure_idx(enclosure_id),
   CONSTRAINT FK_channel_id FOREIGN KEY (channel_id) REFERENCES rss_channels(id)
   ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT FK_category FOREIGN KEY (category_id) REFERENCES categories(id)
-  ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT FK_enclosure_id FOREIGN KEY (enclosure_id) REFERENCES enclosures(id)
   ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
@@ -77,12 +73,27 @@ CREATE TABLE rss_channel_categories (
   category_id INT UNSIGNED NOT NULL,
   rss_channel_id INT UNSIGNED NOT NULL,
   PRIMARY KEY (id),
-  INDEX categories_idx(id),
-  INDEX category_idx(id),
-  INDEX rss_channel_idx(category_id),
+  INDEX rc_categories_idx(id),
+  INDEX category_idx(category_id),
+  INDEX rss_channel_idx(rss_channel_id),
   CONSTRAINT FK_category FOREIGN KEY (category_id) REFERENCES categories(id)
   ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT FK_rss_channel FOREIGN KEY (rss_channel_id) REFERENCES rss_channels(id)
+  ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+drop table if exists rss_item_categories;
+CREATE TABLE rss_item_categories (
+  id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  category_id INT UNSIGNED NOT NULL,
+  rss_item_id INT UNSIGNED NOT NULL,
+  PRIMARY KEY (id),
+  INDEX ri_categories_idx(id),
+  INDEX category_idx(category_id),
+  INDEX rss_item_idx(rss_item_id),
+  CONSTRAINT FK_category FOREIGN KEY (category_id) REFERENCES categories(id)
+  ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT FK_rss_item FOREIGN KEY (rss_item_id) REFERENCES rss_items(id)
   ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
@@ -95,18 +106,6 @@ CREATE TABLE categories (
   INDEX categories_name_idx(name)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
-drop table if exists skip_time;
-CREATE TABLE skip_time (
-  id INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  rss_channel_id INT UNSIGNED NOT NULL,
-  value tinyint(5) NOT NULL COMMENT 'Specifies the hours between 0 and 23 or days from 0 (Monday) to 6 (Sunday)',
-  type tinyint(1) NOT NULL COMMENT 'if type=1 than alueis skipHours, otherwise alueis skipDays',
-  PRIMARY KEY (id),
-  INDEX skip_time_idx(id),
-  CONSTRAINT FK_rss_channel_id FOREIGN KEY (rss_channel_id) REFERENCES rss_channels(id)
-  ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
-
 drop table if exists clouds;
 CREATE TABLE clouds (
   id INT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -114,7 +113,7 @@ CREATE TABLE clouds (
   port SMALLINT UNSIGNED NOT NULL,
   path TEXT NOT NULL,
   register_procedure TEXT NOT NULL,
-  protocol TINYINT(4) UNSIGNED NOT NULL,
+  protocol BIT(4) NOT NULL,
   PRIMARY KEY (id),
   INDEX clouds_idx(id)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
