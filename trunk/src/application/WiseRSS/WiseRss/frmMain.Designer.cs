@@ -44,9 +44,8 @@
             this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.rchTxtContent = new System.Windows.Forms.RichTextBox();
-            this.btnMail = new DevExpress.XtraEditors.SimpleButton();
-            this.btnFacebook = new DevExpress.XtraEditors.SimpleButton();
-            this.btnTweeter = new DevExpress.XtraEditors.SimpleButton();
+            this.btnMail = new System.Windows.Forms.Button();
+            this.btnTwitt = new System.Windows.Forms.Button();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -70,7 +69,7 @@
             this.saveAsToolStripMenuItem,
             this.exitToolStripMenuItem1});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
-            this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
+            this.fileToolStripMenuItem.Size = new System.Drawing.Size(35, 20);
             this.fileToolStripMenuItem.Text = "&File";
             // 
             // addToolStripMenuItem1
@@ -78,13 +77,13 @@
             this.addToolStripMenuItem1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.newFeedToolStripMenuItem});
             this.addToolStripMenuItem1.Name = "addToolStripMenuItem1";
-            this.addToolStripMenuItem1.Size = new System.Drawing.Size(154, 22);
+            this.addToolStripMenuItem1.Size = new System.Drawing.Size(162, 22);
             this.addToolStripMenuItem1.Text = "&Add";
             // 
             // newFeedToolStripMenuItem
             // 
             this.newFeedToolStripMenuItem.Name = "newFeedToolStripMenuItem";
-            this.newFeedToolStripMenuItem.Size = new System.Drawing.Size(126, 22);
+            this.newFeedToolStripMenuItem.Size = new System.Drawing.Size(133, 22);
             this.newFeedToolStripMenuItem.Text = "&New Feed";
             this.newFeedToolStripMenuItem.Click += new System.EventHandler(this.newFeedToolStripMenuItem_Click);
             // 
@@ -92,39 +91,39 @@
             // 
             this.saveAsToolStripMenuItem.Name = "saveAsToolStripMenuItem";
             this.saveAsToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
-            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(154, 22);
+            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(162, 22);
             this.saveAsToolStripMenuItem.Text = "&Save As";
             // 
             // exitToolStripMenuItem1
             // 
             this.exitToolStripMenuItem1.Name = "exitToolStripMenuItem1";
             this.exitToolStripMenuItem1.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.F4)));
-            this.exitToolStripMenuItem1.Size = new System.Drawing.Size(154, 22);
+            this.exitToolStripMenuItem1.Size = new System.Drawing.Size(162, 22);
             this.exitToolStripMenuItem1.Text = "&Exit";
             // 
             // editToolStripMenuItem
             // 
             this.editToolStripMenuItem.Name = "editToolStripMenuItem";
-            this.editToolStripMenuItem.Size = new System.Drawing.Size(39, 20);
+            this.editToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
             this.editToolStripMenuItem.Text = "&Edit";
             // 
             // viewToolStripMenuItem
             // 
             this.viewToolStripMenuItem.Name = "viewToolStripMenuItem";
-            this.viewToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
+            this.viewToolStripMenuItem.Size = new System.Drawing.Size(41, 20);
             this.viewToolStripMenuItem.Text = "&View";
             // 
             // helpToolStripMenuItem
             // 
             this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
-            this.helpToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
+            this.helpToolStripMenuItem.Size = new System.Drawing.Size(40, 20);
             this.helpToolStripMenuItem.Text = "&Help";
             // 
             // treeView1
             // 
-            this.treeView1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.treeView1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
             this.treeView1.Indent = 15;
             this.treeView1.ItemHeight = 16;
             this.treeView1.Location = new System.Drawing.Point(0, 27);
@@ -176,40 +175,33 @@
             // btnMail
             // 
             this.btnMail.Image = global::WiseRss.Properties.Resources.mail_icon;
+            this.btnMail.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.btnMail.Location = new System.Drawing.Point(233, 27);
             this.btnMail.Name = "btnMail";
             this.btnMail.Size = new System.Drawing.Size(75, 23);
             this.btnMail.TabIndex = 4;
             this.btnMail.Text = "e-mail";
+            this.btnMail.UseVisualStyleBackColor = true;
             this.btnMail.Click += new System.EventHandler(this.btnMail_Click);
             // 
-            // btnFacebook
+            // btnTwitt
             // 
-            this.btnFacebook.Image = global::WiseRss.Properties.Resources.facebook_icon;
-            this.btnFacebook.Location = new System.Drawing.Point(314, 27);
-            this.btnFacebook.Name = "btnFacebook";
-            this.btnFacebook.Size = new System.Drawing.Size(75, 23);
-            this.btnFacebook.TabIndex = 5;
-            this.btnFacebook.Text = "share fb";
-            this.btnFacebook.Click += new System.EventHandler(this.btnFacebook_Click);
-            // 
-            // btnTweeter
-            // 
-            this.btnTweeter.Image = global::WiseRss.Properties.Resources.facebook_icon;
-            this.btnTweeter.Location = new System.Drawing.Point(395, 27);
-            this.btnTweeter.Name = "btnTweeter";
-            this.btnTweeter.Size = new System.Drawing.Size(75, 23);
-            this.btnTweeter.TabIndex = 6;
-            this.btnTweeter.Text = "tweet";
-            this.btnTweeter.Click += new System.EventHandler(this.btnTweeter_Click);
+            this.btnTwitt.Image = global::WiseRss.Properties.Resources.twitter_icon;
+            this.btnTwitt.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.btnTwitt.Location = new System.Drawing.Point(314, 27);
+            this.btnTwitt.Name = "btnTwitt";
+            this.btnTwitt.Size = new System.Drawing.Size(75, 23);
+            this.btnTwitt.TabIndex = 5;
+            this.btnTwitt.Text = "twitt";
+            this.btnTwitt.UseVisualStyleBackColor = true;
+            this.btnTwitt.Click += new System.EventHandler(this.btnTwitt_Click);
             // 
             // frmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(830, 448);
-            this.Controls.Add(this.btnTweeter);
-            this.Controls.Add(this.btnFacebook);
+            this.Controls.Add(this.btnTwitt);
             this.Controls.Add(this.btnMail);
             this.Controls.Add(this.rchTxtContent);
             this.Controls.Add(this.treeView1);
@@ -241,9 +233,9 @@
         private System.Windows.Forms.ToolStripMenuItem saveAsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem1;
         private System.Windows.Forms.RichTextBox rchTxtContent;
-        private DevExpress.XtraEditors.SimpleButton btnMail;
-        private DevExpress.XtraEditors.SimpleButton btnFacebook;
-        private DevExpress.XtraEditors.SimpleButton btnTweeter;
+        private System.Windows.Forms.Button btnMail;
+        private System.Windows.Forms.Button btnTwitt;
+
     }
 }
 
