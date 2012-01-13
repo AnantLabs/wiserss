@@ -46,7 +46,7 @@
             this.rchTxtContent = new System.Windows.Forms.RichTextBox();
             this.btnMail = new System.Windows.Forms.Button();
             this.btnTwitt = new System.Windows.Forms.Button();
-            this.pin = new System.Windows.Forms.TextBox();
+            this.btnFacebook = new System.Windows.Forms.Button();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -197,19 +197,25 @@
             this.btnTwitt.UseVisualStyleBackColor = true;
             this.btnTwitt.Click += new System.EventHandler(this.btnTwitt_Click);
             // 
-            // pin
+            // btnFacebook
             // 
-            this.pin.Location = new System.Drawing.Point(395, 27);
-            this.pin.Name = "pin";
-            this.pin.Size = new System.Drawing.Size(100, 20);
-            this.pin.TabIndex = 6;
+            this.btnFacebook.Image = global::WiseRss.Properties.Resources.facebook_icon;
+            this.btnFacebook.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.btnFacebook.Location = new System.Drawing.Point(395, 27);
+            this.btnFacebook.Name = "btnFacebook";
+            this.btnFacebook.Size = new System.Drawing.Size(75, 23);
+            this.btnFacebook.TabIndex = 6;
+            this.btnFacebook.Text = "facebook";
+            this.btnFacebook.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.btnFacebook.UseVisualStyleBackColor = true;
+            this.btnFacebook.Click += new System.EventHandler(this.btnFacebook_Click_1);
             // 
             // frmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(830, 448);
-            this.Controls.Add(this.pin);
+            this.Controls.Add(this.btnFacebook);
             this.Controls.Add(this.btnTwitt);
             this.Controls.Add(this.btnMail);
             this.Controls.Add(this.rchTxtContent);
@@ -244,7 +250,7 @@
         private System.Windows.Forms.RichTextBox rchTxtContent;
         private System.Windows.Forms.Button btnMail;
         private System.Windows.Forms.Button btnTwitt;
-        private System.Windows.Forms.TextBox pin;
+        private System.Windows.Forms.Button btnFacebook;
 
     }
 }

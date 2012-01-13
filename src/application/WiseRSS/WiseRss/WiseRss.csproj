@@ -53,6 +53,9 @@
     <Reference Include="CsharpTwitt">
       <HintPath>..\..\..\references\CsharpTwitt.dll</HintPath>
     </Reference>
+    <Reference Include="Facebook">
+      <HintPath>..\..\..\references\Facebook.dll</HintPath>
+    </Reference>
     <Reference Include="LinqToTwitter">
       <HintPath>..\..\..\references\LinqToTwitter.dll</HintPath>
     </Reference>
@@ -72,6 +75,12 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="FacebookLoginDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FacebookLoginDialog.Designer.cs">
+      <DependentUpon>FacebookLoginDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="frmMain.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -92,6 +101,9 @@
     <Compile Include="TwitterPin.Designer.cs">
       <DependentUpon>TwitterPin.cs</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="FacebookLoginDialog.resx">
+      <DependentUpon>FacebookLoginDialog.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="frmMain.resx">
       <DependentUpon>frmMain.cs</DependentUpon>
     </EmbeddedResource>
