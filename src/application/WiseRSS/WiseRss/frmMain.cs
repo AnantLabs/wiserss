@@ -8,8 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 
-using Facebook;
-
+using CsharpTwitt;
 using Business;
 using Rss;
 using System.Net;
@@ -326,20 +325,8 @@ namespace WiseRss
       }
     }
 
-    private void btnMail_Click(object sender, EventArgs e)
-    {
-        System.Net.Mail.MailMessage message = new System.Net.Mail.MailMessage();
-        message.To.Add("mitja.razpet@gmail.com");
-        message.Subject = selItem.Title;
-        message.From = new System.Net.Mail.MailAddress("mitja.razpet@gmail.com");
-        message.Body = selItem.Description;
-        System.Net.Mail.SmtpClient smtp = new System.Net.Mail.SmtpClient("smtp.siol.net");
-        smtp.Send(message);
-    }
-
     private void btnFacebook_Click(object sender, EventArgs e)
     {
-        wRssObject.InsertNewItems();
 
         ////Get User info
         //Facebook.
@@ -362,25 +349,87 @@ namespace WiseRss
 
     private void btnTweeter_Click(object sender, EventArgs e)
     {
-        var auth = new PinAuthorizer
-        {
-            Credentials = new InMemoryCredentials
-            {
-                ConsumerKey = "JvAth300s1jAyGkmgEQwQ",
-                ConsumerSecret = "6Pl9JfnbJPrwR4uacVKWp8MSgTYi5aZAcFaTsnSiw"
-            },
-            UseCompression = true,
-            GoToTwitterAuthorization = pageLink => Process.Start(pageLink),
-            GetPin = () =>
-            {
-                // this executes after user authorizes, which begins with the call to auth.Authorize() below.
-                Console.WriteLine("\nAfter you authorize this application, Twitter will give you a 7-digit PIN Number.\n");
-                Console.Write("Enter the PIN number here: ");
-                return Console.ReadLine();
-            }
-        };
+        //var auth = new PinAuthorizer
+        //{
+        //    Credentials = new InMemoryCredentials
+        //    {
+        //        ConsumerKey = "JvAth300s1jAyGkmgEQwQ",
+        //        ConsumerSecret = "6Pl9JfnbJPrwR4uacVKWp8MSgTYi5aZAcFaTsnSiw"
+        //    },
+        //    UseCompression = true,
+        //    GoToTwitterAuthorization = pageLink => Process.Start(pageLink),
+        //    GetPin = () =>
+        //    {
+        //        // this executes after user authorizes, which begins with the call to auth.Authorize() below.
+        //        Console.WriteLine("\nAfter you authorize this application, Twitter will give you a 7-digit PIN Number.\n");
+        //        Console.Write("Enter the PIN number here: ");
+        //        return Console.ReadLine();
+        //    }
+        //};
         //var context = new TwitterContext("[myusername]", "[mypassword]");
         //var status = context.UpdateStatus("Tweeted via linq2twitter");
+
+    }
+
+    private void btnMail_Click(object sender, EventArgs e)
+    {
+        System.Net.Mail.MailMessage message = new System.Net.Mail.MailMessage();
+        message.To.Add("mitja.razpet@gmail.com");
+        message.Subject = selItem.Title;
+        message.From = new System.Net.Mail.MailAddress("mitja.razpet@gmail.com");
+        message.Body = selItem.Description;
+        System.Net.Mail.SmtpClient smtp = new System.Net.Mail.SmtpClient("smtp.siol.net");
+        smtp.Send(message);
+    }
+
+
+    private void btnTwitt_Click(object sender, EventArgs e)
+    {
+        //Twitter.UserTwitt userTwitt = new Twitter.UserTwitt();
+        //string strResult = "";
+        //XmlDocument xmlResult = null;
+        //string strUsername = "jamanz@gmail.com";
+        //string strPassword = "ticmis";
+        //string strStatusTexttoUpdate = "Status Updtated from API";
+
+        //strResult = userTwitt.UpdateStatus(strUsername, strPassword, strStatusTexttoUpdate, Twitter.OutputFormatType.xml);
+        //strResult = userTwitt.UpdateStatusAsJSON(strUsername, strPassword, strStatusTexttoUpdate);
+        //xmlResult = userTwitt.UpdateStatusAsXML(strUsername, strPassword, strStatusTexttoUpdate); 
+        //var auth = new PinAuthorizer
+        //{
+        //    Credentials = new InMemoryCredentials
+        //    {
+        //        ConsumerKey = "JvAth300s1jAyGkmgEQwQ",
+        //        ConsumerSecret = "6Pl9JfnbJPrwR4uacVKWp8MSgTYi5aZAcFaTsnSiw"
+        //    },
+        //    UseCompression = true,
+        //    GoToTwitterAuthorization = pageLink => Process.Start(pageLink),
+        //    GetPin = () =>
+        //    {
+        //        // this executes after user authorizes, which begins with the call to auth.Authorize() below.
+        //        Console.WriteLine("\nAfter you authorize this application, Twitter will give you a 7-digit PIN Number.\n");
+        //        Console.Write("Enter the PIN number here: ");
+        //        return Console.ReadLine();
+        //    }
+        //};
+
+        //var auth = new SingleUserAuthorizer { Credentials = new InMemoryCredentials 
+        //{ ConsumerKey = "JvAth300s1jAyGkmgEQwQ",
+        //  ConsumerSecret = "6Pl9JfnbJPrwR4uacVKWp8MSgTYi5aZAcFaTsnSiw",
+        //  OAuthToken = ConfigurationManager.AppSettings["TwitterAccessToken"],
+        //  AccessToken = ConfigurationManager.AppSettings["TwitterAccessTokenSecret"]
+        //}
+        //};
+
+        //using (var db = new TwitterContext(auth))
+        //{
+        //    string search = Server.UrlEncode(txtSearch.Text.Trim());
+
+        //    var list = db.User.Where(u => u.Type == UserType.Search && u.Query == searchExpression && u.Page == 1).ToList();
+        //}
+        //var context = new TwitterContext(auth);
+        //var status = context.UpdateStatus("Tweeted via linq2twitter");
+
 
     }
 
