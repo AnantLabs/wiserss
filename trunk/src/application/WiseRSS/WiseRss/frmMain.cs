@@ -7,7 +7,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-
+using Facebook;
 using CsharpTwitt;
 using Business;
 using Rss;
@@ -15,6 +15,7 @@ using System.Net;
 
 using System.Xml;
 using LinqToTwitter;
+using System.Dynamic;
 
 namespace WiseRss
 {
@@ -37,10 +38,14 @@ namespace WiseRss
                 }
             };
 
+    
+
     private RssObject wRssObject = new RssObject();
     private List<string> lstNewFeeds = new List<string>();
+    private FacebookClient fb;
 
-      private RssItem selItem = null;
+
+    private RssItem selItem = null;
 
     public frmMain()
     {
@@ -412,6 +417,44 @@ namespace WiseRss
             twitterCtx.UpdateStatus(selItem.Link.AbsoluteUri);
         }   
         
+
+    }
+
+    private void btnFacebook_Click_1(object sender, EventArgs e)
+    {
+        FacebookLoginDialog fbLoginDlg = new FacebookLoginDialog("345930678768307", "user_about_me,publish_stream,offline_access");
+        if (fb == null)
+        {
+            
+            fbLoginDlg.ShowDialog();
+            if (fbLoginDlg.FacebookOAuthResult == null)
+            {
+                // the user closed the FacebookLoginDialog, so do nothing.
+                MessageBox.Show("Cancelled!");
+                return;
+            }
+            if (fbLoginDlg.FacebookOAuthResult.IsSuccess)
+            {
+                fb = new FacebookClient(fbLoginDlg.FacebookOAuthResult.AccessToken);
+            }
+        }
+        // Even though facebookOAuthResult is not null, it could had been an 
+        // OAuth 2.0 error, so make sure to check IsSuccess property always.
+        if (fb != null)
+        {
+            dynamic parameters = new ExpandoObject();
+            parameters.message = "bsada";//
+            parameters.link = selItem.Link.AbsoluteUri;
+
+            fb.PostAsync("me/feed", parameters);
+           
+        }
+        else
+        {
+            // for some reason we failed to get the access token.
+            // most likely the user clicked don't allow.
+            MessageBox.Show(fbLoginDlg.FacebookOAuthResult.ErrorDescription);
+        }
 
     }
 
