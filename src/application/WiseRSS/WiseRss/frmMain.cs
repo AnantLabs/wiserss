@@ -2,13 +2,20 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 
+using Facebook;
+
 using Business;
 using Rss;
+using System.Net;
+
+using System.Xml;
+using LinqToTwitter;
 
 namespace WiseRss
 {
@@ -16,6 +23,8 @@ namespace WiseRss
   {
     private RssObject wRssObject = new RssObject();
     private List<string> lstNewFeeds = new List<string>();
+
+      private RssItem selItem = null;
 
     public frmMain()
     {
@@ -308,6 +317,7 @@ namespace WiseRss
         if (item != null)
         {
           rchTxtContent.AppendText(item.Description);
+           selItem = item;
         }
         else
         {
@@ -315,5 +325,65 @@ namespace WiseRss
         }
       }
     }
+
+    private void btnMail_Click(object sender, EventArgs e)
+    {
+        System.Net.Mail.MailMessage message = new System.Net.Mail.MailMessage();
+        message.To.Add("mitja.razpet@gmail.com");
+        message.Subject = selItem.Title;
+        message.From = new System.Net.Mail.MailAddress("mitja.razpet@gmail.com");
+        message.Body = selItem.Description;
+        System.Net.Mail.SmtpClient smtp = new System.Net.Mail.SmtpClient("smtp.siol.net");
+        smtp.Send(message);
+    }
+
+    private void btnFacebook_Click(object sender, EventArgs e)
+    {
+        wRssObject.InsertNewItems();
+
+        ////Get User info
+        //Facebook.
+        //FBUser currentUser = facebook.GetLoggedInUserInfo();
+        ////Link share
+
+        //IFeedPost FBpost = new FeedPost();
+
+        ////Custom Action that we can add
+        //FBpost.Action = new FBAction { Name = "view my blog", Link = "http://blog.impact-works.com/" };
+        //FBpost.Caption = "Image Share";
+        //FBpost.Description = "Test Desc";
+        //FBpost.ImageUrl = "http://www.theadway.com/wall.jpg";
+        //FBpost.Message = "Check out test post";
+        //FBpost.Name = "Test Post";
+        //FBpost.Url = "http://blog.impact-works.com";
+
+        //var postID = facebook.PostToWall(currentUser.id.GetValueOrDefault(), FBpost);
+    }
+
+    private void btnTweeter_Click(object sender, EventArgs e)
+    {
+        var auth = new PinAuthorizer
+        {
+            Credentials = new InMemoryCredentials
+            {
+                ConsumerKey = "JvAth300s1jAyGkmgEQwQ",
+                ConsumerSecret = "6Pl9JfnbJPrwR4uacVKWp8MSgTYi5aZAcFaTsnSiw"
+            },
+            UseCompression = true,
+            GoToTwitterAuthorization = pageLink => Process.Start(pageLink),
+            GetPin = () =>
+            {
+                // this executes after user authorizes, which begins with the call to auth.Authorize() below.
+                Console.WriteLine("\nAfter you authorize this application, Twitter will give you a 7-digit PIN Number.\n");
+                Console.Write("Enter the PIN number here: ");
+                return Console.ReadLine();
+            }
+        };
+        //var context = new TwitterContext("[myusername]", "[mypassword]");
+        //var status = context.UpdateStatus("Tweeted via linq2twitter");
+
+    }
+
+
   }
 }
