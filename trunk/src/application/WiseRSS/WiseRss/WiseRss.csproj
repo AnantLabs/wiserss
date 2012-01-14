@@ -81,6 +81,18 @@
     <Compile Include="FacebookLoginDialog.Designer.cs">
       <DependentUpon>FacebookLoginDialog.cs</DependentUpon>
     </Compile>
+    <Compile Include="frmEmail.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmEmail.Designer.cs">
+      <DependentUpon>frmEmail.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frmEmailAuth.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmEmailAuth.Designer.cs">
+      <DependentUpon>frmEmailAuth.cs</DependentUpon>
+    </Compile>
     <Compile Include="frmMain.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -103,6 +115,12 @@
     </Compile>
     <EmbeddedResource Include="FacebookLoginDialog.resx">
       <DependentUpon>FacebookLoginDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmEmail.resx">
+      <DependentUpon>frmEmail.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmEmailAuth.resx">
+      <DependentUpon>frmEmailAuth.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="frmMain.resx">
       <DependentUpon>frmMain.cs</DependentUpon>

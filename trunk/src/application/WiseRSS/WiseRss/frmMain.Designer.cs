@@ -28,9 +28,9 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.TreeNode treeNode1 = new System.Windows.Forms.TreeNode("Subscriptions", 0, 0);
-            System.Windows.Forms.TreeNode treeNode2 = new System.Windows.Forms.TreeNode("Tags", 1, 1);
-            System.Windows.Forms.TreeNode treeNode3 = new System.Windows.Forms.TreeNode("Bookmarks", 2, 2);
+            System.Windows.Forms.TreeNode treeNode4 = new System.Windows.Forms.TreeNode("Subscriptions", 0, 0);
+            System.Windows.Forms.TreeNode treeNode5 = new System.Windows.Forms.TreeNode("Tags", 1, 1);
+            System.Windows.Forms.TreeNode treeNode6 = new System.Windows.Forms.TreeNode("Bookmarks", 2, 2);
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.addToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
@@ -44,10 +44,12 @@
             this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.rchTxtContent = new System.Windows.Forms.RichTextBox();
-            this.btnMail = new System.Windows.Forms.Button();
-            this.btnTwitt = new System.Windows.Forms.Button();
+            this.pnlShare = new System.Windows.Forms.Panel();
             this.btnFacebook = new System.Windows.Forms.Button();
+            this.btnTwitt = new System.Windows.Forms.Button();
+            this.btnMail = new System.Windows.Forms.Button();
             this.menuStrip1.SuspendLayout();
+            this.pnlShare.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -129,22 +131,22 @@
             this.treeView1.ItemHeight = 16;
             this.treeView1.Location = new System.Drawing.Point(0, 27);
             this.treeView1.Name = "treeView1";
-            treeNode1.ImageIndex = 0;
-            treeNode1.Name = "NodeSubscriptions";
-            treeNode1.SelectedImageIndex = 0;
-            treeNode1.Text = "Subscriptions";
-            treeNode2.ImageIndex = 1;
-            treeNode2.Name = "NodeTags";
-            treeNode2.SelectedImageIndex = 1;
-            treeNode2.Text = "Tags";
-            treeNode3.ImageIndex = 2;
-            treeNode3.Name = "NodeBookmarks";
-            treeNode3.SelectedImageIndex = 2;
-            treeNode3.Text = "Bookmarks";
+            treeNode4.ImageIndex = 0;
+            treeNode4.Name = "NodeSubscriptions";
+            treeNode4.SelectedImageIndex = 0;
+            treeNode4.Text = "Subscriptions";
+            treeNode5.ImageIndex = 1;
+            treeNode5.Name = "NodeTags";
+            treeNode5.SelectedImageIndex = 1;
+            treeNode5.Text = "Tags";
+            treeNode6.ImageIndex = 2;
+            treeNode6.Name = "NodeBookmarks";
+            treeNode6.SelectedImageIndex = 2;
+            treeNode6.Text = "Bookmarks";
             this.treeView1.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
-            treeNode1,
-            treeNode2,
-            treeNode3});
+            treeNode4,
+            treeNode5,
+            treeNode6});
             this.treeView1.PathSeparator = "/";
             this.treeView1.ShowNodeToolTips = true;
             this.treeView1.Size = new System.Drawing.Size(227, 409);
@@ -167,57 +169,65 @@
             // 
             // rchTxtContent
             // 
-            this.rchTxtContent.Location = new System.Drawing.Point(233, 53);
+            this.rchTxtContent.Location = new System.Drawing.Point(233, 63);
             this.rchTxtContent.Name = "rchTxtContent";
-            this.rchTxtContent.Size = new System.Drawing.Size(597, 383);
+            this.rchTxtContent.Size = new System.Drawing.Size(597, 373);
             this.rchTxtContent.TabIndex = 3;
             this.rchTxtContent.Text = "";
             // 
-            // btnMail
+            // pnlShare
             // 
-            this.btnMail.Image = global::WiseRss.Properties.Resources.mail_icon;
-            this.btnMail.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.btnMail.Location = new System.Drawing.Point(233, 27);
-            this.btnMail.Name = "btnMail";
-            this.btnMail.Size = new System.Drawing.Size(75, 23);
-            this.btnMail.TabIndex = 4;
-            this.btnMail.Text = "e-mail";
-            this.btnMail.UseVisualStyleBackColor = true;
-            this.btnMail.Click += new System.EventHandler(this.btnMail_Click);
-            // 
-            // btnTwitt
-            // 
-            this.btnTwitt.Image = global::WiseRss.Properties.Resources.twitter_icon;
-            this.btnTwitt.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.btnTwitt.Location = new System.Drawing.Point(314, 27);
-            this.btnTwitt.Name = "btnTwitt";
-            this.btnTwitt.Size = new System.Drawing.Size(75, 23);
-            this.btnTwitt.TabIndex = 5;
-            this.btnTwitt.Text = "twitt";
-            this.btnTwitt.UseVisualStyleBackColor = true;
-            this.btnTwitt.Click += new System.EventHandler(this.btnTwitt_Click);
+            this.pnlShare.Controls.Add(this.btnFacebook);
+            this.pnlShare.Controls.Add(this.btnTwitt);
+            this.pnlShare.Controls.Add(this.btnMail);
+            this.pnlShare.Location = new System.Drawing.Point(233, 27);
+            this.pnlShare.Name = "pnlShare";
+            this.pnlShare.Size = new System.Drawing.Size(254, 30);
+            this.pnlShare.TabIndex = 7;
             // 
             // btnFacebook
             // 
             this.btnFacebook.Image = global::WiseRss.Properties.Resources.facebook_icon;
             this.btnFacebook.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.btnFacebook.Location = new System.Drawing.Point(395, 27);
+            this.btnFacebook.Location = new System.Drawing.Point(165, 3);
             this.btnFacebook.Name = "btnFacebook";
             this.btnFacebook.Size = new System.Drawing.Size(75, 23);
-            this.btnFacebook.TabIndex = 6;
+            this.btnFacebook.TabIndex = 9;
             this.btnFacebook.Text = "facebook";
             this.btnFacebook.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.btnFacebook.UseVisualStyleBackColor = true;
-            this.btnFacebook.Click += new System.EventHandler(this.btnFacebook_Click_1);
+            this.btnFacebook.Click += new System.EventHandler(this.btnFacebook_Click);
+            // 
+            // btnTwitt
+            // 
+            this.btnTwitt.Image = global::WiseRss.Properties.Resources.twitter_icon;
+            this.btnTwitt.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.btnTwitt.Location = new System.Drawing.Point(84, 3);
+            this.btnTwitt.Name = "btnTwitt";
+            this.btnTwitt.Size = new System.Drawing.Size(75, 23);
+            this.btnTwitt.TabIndex = 8;
+            this.btnTwitt.Text = "twitt";
+            this.btnTwitt.UseVisualStyleBackColor = true;
+            this.btnTwitt.Click += new System.EventHandler(this.btnTwitt_Click);
+            // 
+            // btnMail
+            // 
+            this.btnMail.Image = global::WiseRss.Properties.Resources.mail_icon;
+            this.btnMail.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.btnMail.Location = new System.Drawing.Point(3, 3);
+            this.btnMail.Name = "btnMail";
+            this.btnMail.Size = new System.Drawing.Size(75, 23);
+            this.btnMail.TabIndex = 7;
+            this.btnMail.Text = "e-mail";
+            this.btnMail.UseVisualStyleBackColor = true;
+            this.btnMail.Click += new System.EventHandler(this.btnMail_Click);
             // 
             // frmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(830, 448);
-            this.Controls.Add(this.btnFacebook);
-            this.Controls.Add(this.btnTwitt);
-            this.Controls.Add(this.btnMail);
+            this.Controls.Add(this.pnlShare);
             this.Controls.Add(this.rchTxtContent);
             this.Controls.Add(this.treeView1);
             this.Controls.Add(this.menuStrip1);
@@ -228,6 +238,7 @@
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
+            this.pnlShare.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -248,9 +259,10 @@
         private System.Windows.Forms.ToolStripMenuItem saveAsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem1;
         private System.Windows.Forms.RichTextBox rchTxtContent;
-        private System.Windows.Forms.Button btnMail;
-        private System.Windows.Forms.Button btnTwitt;
+        private System.Windows.Forms.Panel pnlShare;
         private System.Windows.Forms.Button btnFacebook;
+        private System.Windows.Forms.Button btnTwitt;
+        private System.Windows.Forms.Button btnMail;
 
     }
 }
