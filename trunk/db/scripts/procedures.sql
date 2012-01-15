@@ -412,7 +412,7 @@ PROCEDURE GetRssChannelImage(IN p_id INT UNSIGNED)
 BEGIN
 SELECT *
 FROM rss_channel_images
-WHERE id = p_id
+WHERE rss_channel_id = p_id
 LIMIT 1;
 END $$
 
@@ -440,7 +440,7 @@ PROCEDURE InsertRssChannelImage(IN p_rss_channel_id INT UNSIGNED,
                                 IN p_url TEXT,
                                 IN p_title VARCHAR(255),
                                 IN p_link TEXT,
-                                IN p_image BLOB,
+                                IN p_image_path TEXT,
                                 OUT p_id INT UNSIGNED)
 BEGIN
 SET p_id = GetRssChannelImageID(p_url);
@@ -450,13 +450,13 @@ IF p_id = 0 THEN
                                 url,
                                 title,
                                 link,
-                                image)
+                                image_path)
                          VALUES(id,
                                 p_rss_channel_id,
                                 p_url,
                                 p_title,
                                 p_link,
-                                p_image);
+                                p_image_path);
   SET p_id = GetRssChannelImageID(p_url);
 END IF;
 END $$
@@ -469,7 +469,7 @@ PROCEDURE UpdateRssChannelImage(IN p_id INT UNSIGNED,
                                 IN p_url TEXT,
                                 IN p_title VARCHAR(255),
                                 IN p_link TEXT,
-                                IN p_image BLOB)
+                                IN p_image_path TEXT)
 BEGIN
 IF p_id > 0 THEN
   UPDATE rss_channel_images
@@ -477,7 +477,7 @@ IF p_id > 0 THEN
         url = p_url,
         title = p_title,
         link = p_link,
-        image = p_image
+        image_path = p_image_path
     WHERE id = p_id;
 END IF;
 END $$

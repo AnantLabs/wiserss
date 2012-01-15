@@ -38,7 +38,7 @@ namespace Rss
   {
     private ArrayList _alBindTo = new ArrayList();
     private RssModuleItemCollection _rssChannelExtensions = new RssModuleItemCollection();
-    private RssModuleItemCollectionCollection _rssItemExtensions = new RssModuleItemCollectionCollection();
+    private RssModuleItemCollection _rssItemExtensions = new RssModuleItemCollection();
 
     /// <summary>Initialize a new instance of the RssModule class</summary>
     protected RssModule() { }
@@ -51,7 +51,7 @@ namespace Rss
     }
 
     /// <summary>Collection of RSSModuleItemCollection that are to be placed in the channel item</summary>
-    internal RssModuleItemCollectionCollection ItemExtensions
+    internal RssModuleItemCollection ItemExtensions
     {
       get { return this._rssItemExtensions; }
       set { this._rssItemExtensions = value; }

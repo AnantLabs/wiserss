@@ -121,6 +121,9 @@
   <data name="bookmarks_icon" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\bookmarks_icon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="disable_bookmarks_icon" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\disable_bookmarks_icon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="facebook_icon" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\facebook_icon.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>

@@ -109,4 +109,34 @@
       return sb.ToString();
     }
   }
+
+  /// <summary>
+  /// 
+  /// </summary>
+  public class String
+  {
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="path"></param>
+    /// <returns></returns>
+    public static string WindowsPath(string path)
+    {
+      return path.Replace('\\', '0').
+        Replace('/', '0').
+        Replace(':', '0').
+        Replace('*', '0').
+        Replace('?', '0').
+        Replace('"', '0').
+        Replace('<', '0').
+        Replace('>', '0').
+        Replace('|', '0');
+    }
+  }
+
+  /// <summary>
+  /// Represents a delegate that can execute any method in managed code that is
+  ///  declared void and takes no parameters.
+  /// </summary>
+  public delegate void MethodInvoker();
 }

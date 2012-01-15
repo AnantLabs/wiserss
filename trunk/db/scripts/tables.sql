@@ -4,14 +4,12 @@ use wiserss;
 drop table if exists rss_channels;
 CREATE TABLE rss_channels (
   id INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  /*category_id INT UNSIGNED COMMENT 'Specify one or more categories that the channel belongs to',*/
   cloud_id INT UNSIGNED COMMENT 'Allows processes to register with a cloud to be notified of updates to the channel,
                                  implementing a lightweight publish-subscribe protocol for RSS feeds',
   copyright TEXT COMMENT 'Copyright notice for content in the channel.',
   description MEDIUMTEXT NOT NULL COMMENT 'Phrase or sentence describing the channel',
   docs VARCHAR(255) COMMENT 'A URL that points to the documentation for the format used in the RSS file',
   generator VARCHAR(255) COMMENT 'A string indicating the program used to generate the channel',
-  /* rss_channel_images - 'Specifies a GIF, JPEG or PNG image that can be displayed with the channel' */
   language_id INT UNSIGNED COMMENT 'The language the channel is written in',
   last_build_date DATETIME COMMENT 'The last time the content of the channel changed',
   link TEXT NOT NULL COMMENT 'The URL to the HTML website corresponding to the channel',
@@ -67,6 +65,7 @@ CREATE TABLE rss_items (
   ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
+/* Specify one or more categories that the channel belongs to */
 drop table if exists rss_channel_categories;
 CREATE TABLE rss_channel_categories (
   id INT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -145,6 +144,7 @@ CREATE TABLE text_inputs (
   INDEX text_inputs_idx(id)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
+/* Specifies a image that can be displayed with the channel */
 drop table if exists rss_channel_images;
 CREATE TABLE rss_channel_images (
   id INT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -152,7 +152,7 @@ CREATE TABLE rss_channel_images (
   url TEXT COMMENT 'Defines the URL to the image',
   title VARCHAR(255) COMMENT 'Defines the text to display if the image could not be shown',
   link TEXT COMMENT 'Defines the hyperlink to the website that offers the channel',
-  image BLOB NOT NULL,
+  image_path TEXT NOT NULL,
   PRIMARY KEY (id),
   INDEX rss_channel_images_idx(id, rss_channel_id),
   CONSTRAINT FK_rss_channel_id FOREIGN KEY (rss_channel_id) REFERENCES rss_channels(id)

@@ -141,7 +141,6 @@
     <EmbeddedResource Include="TwitterPin.resx">
       <DependentUpon>TwitterPin.cs</DependentUpon>
     </EmbeddedResource>
-    <None Include="app.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -201,6 +200,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\twitter_icon2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\disable_bookmarks_icon.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
