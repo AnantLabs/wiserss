@@ -488,6 +488,7 @@ namespace Rss
                           item.Title = elementText.ToString();
                           break;
                         case "link":
+                          item.Status = RssStatus.Update;
                           item.Link = new Uri(elementText.ToString());
                           break;
                         case "description":
@@ -629,7 +630,10 @@ namespace Rss
                       case "url":
                         try
                         {
-                          image.Url = new Uri(elementText.ToString());
+                          image.Status = RssStatus.Update;
+                          string imgUrl = elementText.ToString();
+                          imgUrl = !imgUrl.StartsWith("//") ? imgUrl : "http:" + imgUrl;
+                          image.Url = new Uri(imgUrl);
                         }
                         catch (Exception e)
                         {

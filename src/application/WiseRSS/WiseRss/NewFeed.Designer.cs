@@ -41,7 +41,7 @@
       this.btnOK.Location = new System.Drawing.Point(512, 238);
       this.btnOK.Name = "btnOK";
       this.btnOK.Size = new System.Drawing.Size(75, 23);
-      this.btnOK.TabIndex = 1;
+      this.btnOK.TabIndex = 4;
       this.btnOK.Text = "OK";
       this.btnOK.UseVisualStyleBackColor = true;
       this.btnOK.Click += new System.EventHandler(this.btnOK_Click);
@@ -52,7 +52,7 @@
       this.btnCancel.Location = new System.Drawing.Point(599, 238);
       this.btnCancel.Name = "btnCancel";
       this.btnCancel.Size = new System.Drawing.Size(75, 23);
-      this.btnCancel.TabIndex = 2;
+      this.btnCancel.TabIndex = 5;
       this.btnCancel.Text = "Cancel";
       this.btnCancel.UseVisualStyleBackColor = true;
       // 
@@ -69,7 +69,7 @@
       this.txtUrl.Location = new System.Drawing.Point(47, 6);
       this.txtUrl.Name = "txtUrl";
       this.txtUrl.Size = new System.Drawing.Size(527, 20);
-      this.txtUrl.TabIndex = 4;
+      this.txtUrl.TabIndex = 1;
       // 
       // lblUrl
       // 
@@ -78,7 +78,7 @@
       this.lblUrl.Location = new System.Drawing.Point(9, 9);
       this.lblUrl.Name = "lblUrl";
       this.lblUrl.Size = new System.Drawing.Size(32, 13);
-      this.lblUrl.TabIndex = 5;
+      this.lblUrl.TabIndex = 0;
       this.lblUrl.Text = "URL:";
       // 
       // btnAdd
@@ -86,7 +86,7 @@
       this.btnAdd.Location = new System.Drawing.Point(589, 4);
       this.btnAdd.Name = "btnAdd";
       this.btnAdd.Size = new System.Drawing.Size(88, 23);
-      this.btnAdd.TabIndex = 6;
+      this.btnAdd.TabIndex = 2;
       this.btnAdd.Text = "Add";
       this.btnAdd.UseVisualStyleBackColor = true;
       this.btnAdd.Click += new System.EventHandler(this.btnAdd_Click);

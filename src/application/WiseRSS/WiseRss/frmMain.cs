@@ -1,52 +1,52 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Diagnostics;
 using System.Drawing;
-using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using Facebook;
-using CsharpTwitt;
 using Business;
 using Rss;
-using System.Net;
+using System.Threading.Tasks;
+using System.IO;
 
-using System.Xml;
 using LinqToTwitter;
 using System.Dynamic;
-using System.Net.Mail;
 
 namespace WiseRss
 {
   public partial class frmMain : Form
   {
     public PinAuthorizer twitterAuth = new PinAuthorizer
-            {
-                Credentials = new InMemoryCredentials
-                {
-                    ConsumerKey = "JvAth300s1jAyGkmgEQwQ",
-                    ConsumerSecret = "6Pl9JfnbJPrwR4uacVKWp8MSgTYi5aZAcFaTsnSiw",
-                },
-                UseCompression = true,
-                GoToTwitterAuthorization = pageLink => Process.Start(pageLink),
-                GetPin = () =>
-                {
-                    TwitterPin tp = new TwitterPin();
-                    tp.ShowDialog();
-                    return tp.pin;
-                }
-            };
-
-    
+    {
+      Credentials = new InMemoryCredentials
+      {
+        ConsumerKey = "JvAth300s1jAyGkmgEQwQ",
+        ConsumerSecret = "6Pl9JfnbJPrwR4uacVKWp8MSgTYi5aZAcFaTsnSiw",
+      },
+      UseCompression = true,
+      GoToTwitterAuthorization = pageLink => Process.Start(pageLink),
+      GetPin = () =>
+      {
+        TwitterPin tp = new TwitterPin();
+        tp.ShowDialog();
+        return tp.pin;
+      }
+    };
 
     private RssObject wRssObject = new RssObject();
     private List<string> lstNewFeeds = new List<string>();
-    private FacebookClient fb;
+    private DataFormats.Format bmpFormat = DataFormats.GetFormat(DataFormats.Bitmap);
+    private Bitmap[] bitmaps = new Bitmap[] {
+      Properties.Resources.mail_icon,
+      Properties.Resources.bookmarks_icon,
+      Properties.Resources.disable_bookmarks_icon,
+      Properties.Resources.facebook_icon,
+      Properties.Resources.twitter_icon
+    };
 
     private frmEmail frmMail = new frmEmail();
-
+    private FacebookClient fb;
     private RssItem selItem = null;
 
     public frmMain()
@@ -54,6 +54,9 @@ namespace WiseRss
       InitializeComponent();
 
       LoadTreeView();
+
+      // The Top Posts widgets and the PostRank APIs is disabled.
+      // More http://blog.postrank.com/2012/01/the-top-posts-widget-and-google-reader-extension-to-be-retired-on-april-1st/
     }
 
     public RssObject WRssObject
@@ -61,30 +64,34 @@ namespace WiseRss
       get { return wRssObject; }
     }
 
-    public List<string> LstNewFeeds
+    public List<string> ListNewFeeds
     {
       get { return lstNewFeeds; }
     }
 
     private void LoadTreeView()
     {
+      if (treeView1.Nodes.IndexOfKey("NodeSubscriptions") < 0)
+      {
+        return;
+      }
+
       if (treeView1.Nodes.IndexOfKey("NodeTags") < 0)
       {
         return;
       }
 
-      TreeNodeCollection nodes = treeView1.Nodes["NodeTags"].Nodes;
-      foreach (RssCategory category in WRssObject.Categories)
-      {
-        if (category.Name.Trim().Length > 0)
-        {
-          nodes.Add(category.Name);
-        }
-      }
-
-      if (treeView1.Nodes.IndexOfKey("NodeSubscriptions") < 0)
+      if (treeView1.Nodes.IndexOfKey("NodeBookmarks") < 0)
       {
         return;
+      }
+      
+      TreeNodeCollection bookmarks = treeView1.Nodes["NodeBookmarks"].Nodes;
+      TreeNodeCollection nodes = treeView1.Nodes["NodeTags"].Nodes;
+
+      foreach (RssCategory category in WRssObject.Categories)
+      {
+        nodes.Add(category.Name);
       }
 
       ImageList imgList = new ImageList();
@@ -96,7 +103,7 @@ namespace WiseRss
         g.DrawRectangle(new Pen(new SolidBrush(Color.White)), 0, 0, bmp.Width, bmp.Height);
         g.DrawImage(bmp, 0, 0);
       }
-      
+
       imgList.Images.Add(bmp);
 
       bmp = new Bitmap(Properties.Resources.tag_icon);
@@ -109,53 +116,59 @@ namespace WiseRss
       nodes = treeView1.Nodes["NodeSubscriptions"].Nodes;
       TreeNode node = null;
 
-      foreach (RssChannel channel in WRssObject.Channels)
+      Parallel.ForEach(WRssObject.Channels, channel =>
       {
-        System.Diagnostics.Debug.WriteLine(channel.ToString());
-        if (channel.Title.Trim().Length > 0)
+        node = new TreeNode(channel.Title.Substring(0,
+          System.Math.Min(channel.Title.Length, 99)));
+
+        node.ToolTipText = channel.Description.Substring(0,
+          System.Math.Min(channel.Description.Length, 99));
+
+        if (channel.Favorite)
         {
-          node = new TreeNode(channel.Title);
-          node.ToolTipText = channel.Description.Trim();
-
-          TreeNode childNode = null;
-
-          foreach (RssItem item in channel.Items)
-          {
-            childNode = new TreeNode(item.Title);
-            childNode.ToolTipText = item.Description;
-            node.Nodes.Add(childNode);
-          }
-
-          nodes.Add(node);
+          bookmarks.Add(node.Text);
         }
-      }
+
+        TreeNode childNode = null;
+
+        foreach (RssItem item in channel.Items)
+        {
+          childNode = new TreeNode(item.Title.Substring(0,
+          System.Math.Min(item.Title.Length, 99)));
+
+          childNode.ToolTipText = item.Description.Substring(0,
+            System.Math.Min(item.Description.Length, 99)) + "...";
+          node.Nodes.Add(childNode);
+        }
+
+        nodes.Add(node);
+      });
     }
 
     private void Form1_FormClosing(object sender, FormClosingEventArgs e)
     {
-      LstNewFeeds.Clear();
-      WRssObject.InsertNewChannels();
+      ListNewFeeds.Clear();
       WRssObject.InsertNewItems();
     }
 
     private void LoadRichTextBoxIcons()
     {
-      Bitmap[] bitmaps = new Bitmap[] {
-          Properties.Resources.mail_icon,
-          Properties.Resources.bookmarks_icon,
-          Properties.Resources.facebook_icon,
-          Properties.Resources.twitter_icon };
-
-      DataFormats.Format bmpFormat = DataFormats.GetFormat(DataFormats.Bitmap);
-
       foreach (Bitmap bmp in bitmaps)
       {
-        Clipboard.SetDataObject(bmp);
-
-        if (rchTxtContent.CanPaste(bmpFormat))
+        this.Invoke((MethodInvoker)delegate()
         {
-          rchTxtContent.Paste(bmpFormat);
-        }
+          PasteBitmap(bmp);
+        });
+      }
+    }
+
+    private void PasteBitmap(Bitmap image)
+    {
+      Clipboard.SetDataObject(image);
+
+      if (rchTxtContent.CanPaste(bmpFormat))
+      {
+        rchTxtContent.Paste(bmpFormat);
       }
     }
 
@@ -176,6 +189,7 @@ namespace WiseRss
 #if DEBUG
           new Util.Debug(new System.Diagnostics.StackTrace(true), ex.ToString()).Print();
 #endif
+          return;
         }
 
         if (feed == null)
@@ -185,64 +199,81 @@ namespace WiseRss
 
         foreach (RssChannel channel in feed.Channels)
         {
-          wRssObject.Channels.Add(channel);
+          byte[] channelPlainTextBytes = Encoding.UTF8.GetBytes(channel.Link.OriginalString);
+          string channelPath = System.IO.Path.GetDirectoryName(Application.ExecutablePath) +
+            "\\img\\" +
+            Util.String.WindowsPath(Convert.ToBase64String(channelPlainTextBytes));
+
+          try
+          {
+            // create img folder for this channel
+            if (!System.IO.Directory.Exists(channelPath))
+            {
+              Directory.CreateDirectory(channelPath);
+            }
+          }
+          catch (Exception) { }
 
           TreeNodeCollection nodeCategories = treeView1.Nodes["NodeTags"].Nodes;
 
           foreach (RssCategory category in channel.Categories)
           {
-            if (category.Name.Trim().Length > 0 &&
-                TreeNodeCollectionContains(nodeCategories, category.Name) == 0)
+            if (-1 == TreeNodeCollectionContains(nodeCategories, category.Name))
             {
               nodeCategories.Add(category.Name);
             }
           }
 
-          if (channel.Title.Trim().Length > 0)
-          {
-            TreeNode node = null;
-            bool newFeed = false;
-            int index = TreeNodeCollectionContains(nodeFeed, channel.Title);
+          TreeNode node = null;
+          bool newFeed = false;
+          int index = TreeNodeCollectionContains(nodeFeed, channel.Title);
 
-            if (index > 0)
+          if (index > -1)
+          {
+            node = nodeFeed[index];
+          }
+          else
+          {
+            newFeed = true;
+            node = new TreeNode(channel.Title.Substring(0,
+              System.Math.Min(channel.Title.Length, 99)));
+
+            node.ToolTipText = channel.Description.Substring(0,
+              System.Math.Min(channel.Description.Length, 99));
+          }
+
+          TreeNode childNode = null;
+
+          foreach (RssItem item in channel.Items)
+          {
+            index = TreeNodeCollectionContains(node.Nodes, item.Title);
+
+            if (index > -1)
             {
-              node = nodeFeed[index];
+              childNode = node.Nodes[index];
+              childNode.ToolTipText = item.Description.Substring(0,
+                System.Math.Min(item.Description.Length, 99));
             }
             else
             {
-              newFeed = true;
-              node = new TreeNode(channel.Title);
-              node.ToolTipText = channel.Description.Trim();
+              childNode = new TreeNode(item.Title.Substring(0,
+                System.Math.Min(item.Title.Length, 99)));
+              childNode.ToolTipText = item.Description.Substring(0,
+                System.Math.Min(item.Description.Length, 99));
+              node.Nodes.Add(childNode);
             }
+            item.Status = RssStatus.Update;
+          }
+          channel.Status = RssStatus.Update;
+          channel.Image.Status = RssStatus.Update;
 
-            TreeNode childNode = null;
-
-            foreach (RssItem item in channel.Items)
-            {
-              index = TreeNodeCollectionContains(node.Nodes, item.Title);
-
-              if (index > 0)
-              {
-                childNode = node.Nodes[index];
-                childNode.ToolTipText = item.Description;
-              }
-              else
-              {
-                childNode = new TreeNode(item.Title);
-                childNode.ToolTipText = item.Description;
-                node.Nodes.Add(childNode);
-              }
-            }
-
-            if (newFeed)
-            {
-              nodeFeed.Add(node);
-            }
+          if (newFeed)
+          {
+            this.Invoke((MethodInvoker)delegate() { nodeFeed.Add(node); });
           }
 
           // insert new channel
-          WRssObject.Channels.Add(channel);
-          WRssObject.InsertNewChannels();
+          WRssObject.InsertNewChannel(channel);
         }
       }
       lstNewFeeds.Clear();
@@ -259,7 +290,7 @@ namespace WiseRss
         }
         ++i;
       }
-      return 0;
+      return -1;
     }
 
     private void newFeedToolStripMenuItem_Click(object sender, EventArgs e)
@@ -269,9 +300,16 @@ namespace WiseRss
         frmFeed.ShowDialog(this);
       }
 
-      AddNewFeeds();
+      MethodInvoker addNewFeedsDelegate = new MethodInvoker(AddNewFeeds);
 
-      return;
+      addNewFeedsDelegate.BeginInvoke(new AsyncCallback(delegate(IAsyncResult ar)
+      {
+        this.Invoke((MethodInvoker)delegate()
+        {
+          addNewFeedsDelegate.EndInvoke(ar);
+        });
+      }),
+        null);
     }
 
     private void treeView1_AfterSelect(object sender, TreeViewEventArgs e)
@@ -294,133 +332,173 @@ namespace WiseRss
       RssChannel channel = null;
       RssItem item = null;
 
-      foreach (RssChannel rc in WRssObject.Channels)
+      if (parent.Text.Equals(treeView1.Nodes[0].Text))
       {
-        if (rc.Title.Equals(node.Text) &&
-            rc.Description.Equals(node.ToolTipText))
-        {
-          channel = rc;
-          break;
-        }
+        channel = WRssObject.GetChannel(node.Text);
+      }
+      else
+      {
+        channel = WRssObject.GetChannel(parent.Text);
+        item = WRssObject.GetItem(parent.Text + node.Text);
       }
 
       if (channel == null)
       {
-        foreach (RssChannel rc in WRssObject.Channels)
-        {
-          if (rc.Title.Equals(parent.Text) && rc.Description.Equals(parent.ToolTipText))
-          {
-            foreach (RssItem ri in rc.Items)
-            {
-              if (ri.Title.Equals(node.Text) &&
-                  ri.Description.Equals(node.ToolTipText))
-              {
-                channel = rc;
-                item = ri;
-                break;
-              }
-            }
-          }
-        }
+        return;
       }
 
-      if (channel != null)
+      if (channel.Favorite)
       {
-        if (item != null)
-        {
-          LoadRichTextBoxIcons();
-          rchTxtContent.AppendText(System.Environment.NewLine);
-        }
+        btnBookmark.Image = bitmaps[1];
+      }
+      else
+      {
+        btnBookmark.Image = bitmaps[2];
+      }
 
-        rchTxtContent.AppendText(channel.Title);
-        rchTxtContent.AppendText(System.Environment.NewLine);
-        rchTxtContent.AppendText(channel.LastBuildDate.ToString());
-        rchTxtContent.AppendText(System.Environment.NewLine);
+      rchTxtContent.AppendText(channel.Title);
+      rchTxtContent.AppendText(System.Environment.NewLine);
+      rchTxtContent.AppendText(channel.LastBuildDate.ToString());
+      rchTxtContent.AppendText(System.Environment.NewLine);
 
-        if (item != null)
+      if (item != null)
+      {
+        rchTxtContent.AppendText(item.Description);
+      }
+      else
+      {
+        if (channel.Image.Image != null && channel.Image.Image.Length > 0)
         {
-          rchTxtContent.AppendText(item.Description);
-           selItem = item;
+          PasteBitmap(new Bitmap(channel.Image.Image));
         }
-        else
-        {
-          rchTxtContent.AppendText(channel.Description);
-        }
+        rchTxtContent.AppendText(channel.Description);
       }
     }
 
-    
+
 
     private void btnMail_Click(object sender, EventArgs e)
     {
-        frmMail.setParams(selItem.Title, selItem.Link.AbsoluteUri);
-        frmMail.ShowDialog();
+      if (selItem != null)
+      {
+        try
+        {
+          frmMail.setParams(selItem.Title, selItem.Link.AbsoluteUri);
+          frmMail.ShowDialog();
+        }
+        catch (Exception) { }
+      }
     }
-        
+
 
     private void btnTwitt_Click(object sender, EventArgs e)
     {
-        try
+      try
+      {
+        if (!twitterAuth.IsAuthorized)
         {
-            if (!twitterAuth.IsAuthorized)
-            {
-                twitterAuth.Authorize();
-            }
-            if (twitterAuth.IsAuthorized)
-            {
-                using (var twitterCtx = new TwitterContext(twitterAuth, "https://api.twitter.com/1/", "https://search.twitter.com/"))
-                {
-                    twitterCtx.UpdateStatus(selItem.Link.AbsoluteUri);
-                }
-            }
-            else
-            {
-                MessageBox.Show("Avtorizacija ni uspela.");
-            }
+          twitterAuth.Authorize();
         }
-        catch (Exception)
+        if (twitterAuth.IsAuthorized)
         {
-           
+          using (var twitterCtx = new TwitterContext(twitterAuth, "https://api.twitter.com/1/", "https://search.twitter.com/"))
+          {
+            twitterCtx.UpdateStatus(selItem.Link.AbsoluteUri);
+          }
         }
+        else
+        {
+          MessageBox.Show("Avtorizacija ni uspela.");
+        }
+      }
+      catch (Exception)
+      {
+
+      }
     }
 
     private void btnFacebook_Click(object sender, EventArgs e)
     {
-        FacebookLoginDialog fbLoginDlg = new FacebookLoginDialog("345930678768307", "user_about_me,publish_stream,offline_access");
-        if (fb == null)
+      FacebookLoginDialog fbLoginDlg = new FacebookLoginDialog("345930678768307", "user_about_me,publish_stream,offline_access");
+      if (fb == null)
+      {
+        fbLoginDlg.ShowDialog();
+        if (fbLoginDlg.FacebookOAuthResult == null)
         {
-            fbLoginDlg.ShowDialog();
-            if (fbLoginDlg.FacebookOAuthResult == null)
-            {
-                // the user closed the FacebookLoginDialog, so do nothing.
-                MessageBox.Show("Cancelled!");
-                return;
-            }
-            if (fbLoginDlg.FacebookOAuthResult.IsSuccess)
-            {
-                fb = new FacebookClient(fbLoginDlg.FacebookOAuthResult.AccessToken);
-            }
+          // the user closed the FacebookLoginDialog, so do nothing.
+          MessageBox.Show("Cancelled!");
+          return;
         }
-        // Even though facebookOAuthResult is not null, it could had been an 
-        // OAuth 2.0 error, so make sure to check IsSuccess property always.
-        if (fb != null)
+        if (fbLoginDlg.FacebookOAuthResult.IsSuccess)
         {
-            dynamic parameters = new ExpandoObject();
-            parameters.message = "twstdfsgsdfg"; // selItem.Title;
-           // parameters.link = selItem.Link.AbsoluteUri;
+          fb = new FacebookClient(fbLoginDlg.FacebookOAuthResult.AccessToken);
+        }
+      }
+      // Even though facebookOAuthResult is not null, it could had been an 
+      // OAuth 2.0 error, so make sure to check IsSuccess property always.
+      if (fb != null && selItem != null)
+      {
+        dynamic parameters = new ExpandoObject();
+        parameters.message = selItem.Title;
+        parameters.link = selItem.Link.AbsoluteUri;
 
-            fb.PostAsync("me/feed", parameters);
-           
-        }
-        else
+        fb.PostAsync("me/feed", parameters);
+      }
+      else
+      {
+        // for some reason we failed to get the access token.
+        // most likely the user clicked don't allow.
+        MessageBox.Show(fbLoginDlg.FacebookOAuthResult.ErrorDescription);
+      }
+    }
+
+    private void btnBookmark_Click(object sender, EventArgs e)
+    {
+      if (treeView1.SelectedNode != null && treeView1.SelectedNode.Parent != null &&
+         (treeView1.SelectedNode.Parent.Text.Equals("Subscriptions") ||
+          treeView1.SelectedNode.Parent.Parent != null && treeView1.SelectedNode.Parent.Parent.Text.Equals("Subscriptions"))
+         )
+      {
+        RssChannel channel = WRssObject.GetChannel(treeView1.SelectedNode.Text);
+
+        if (channel == null)
         {
-            // for some reason we failed to get the access token.
-            // most likely the user clicked don't allow.
-            MessageBox.Show(fbLoginDlg.FacebookOAuthResult.ErrorDescription);
+          channel = WRssObject.GetChannel(treeView1.SelectedNode.Parent.Text);
         }
+
+        if (channel != null)
+        {
+          channel.Favorite = !channel.Favorite;
+          TreeNodeCollection bookmarks = treeView1.Nodes["NodeBookmarks"].Nodes;
+
+          if (channel.Favorite)
+          {
+            btnBookmark.Image = bitmaps[1];
+            bookmarks.Add(channel.Title);
+          }
+          else
+          {
+            btnBookmark.Image = bitmaps[2];
+
+            int index = TreeNodeCollectionContains(bookmarks, channel.Title);
+
+            if (index > -1)
+            {
+              bookmarks.RemoveAt(index);
+            }
+          }
+        }
+      }
+    }
+
+    private void btnTag_Click(object sender, EventArgs e)
+    {
 
     }
 
+    private void btnTranslate_Click(object sender, EventArgs e)
+    {
 
+    }
   }
 }

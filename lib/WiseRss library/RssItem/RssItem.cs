@@ -56,7 +56,19 @@ namespace Rss
     private int commentCount = RssDefault.Int;
     private string commentRss = RssDefault.String;
     private string commentApiUrl = RssDefault.String;
+    private RssStatus status = RssStatus.Unchanged;
+    private bool canSave = RssDefault.Bool;
 
+    /// <summary>
+    /// 
+    /// </summary>
+    public delegate void ItemDownloadCompletedHandler();
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public event ItemDownloadCompletedHandler ItemDownloadCompleted;
+    
 
     #endregion
 
@@ -92,7 +104,7 @@ namespace Rss
     public long ID
     {
       get { return id; }
-      set { id = RssDefault.Check(value); }
+      set { id = RssDefault.Check(value); Status = RssStatus.Changed; }
     }
 
     /// <summary>
@@ -101,7 +113,7 @@ namespace Rss
     public long CategoryID
     {
       get { return categoryId; }
-      set { categoryId = RssDefault.Check(value); }
+      set { categoryId = RssDefault.Check(value); Status = RssStatus.Changed; }
     }
 
     /// <summary>
@@ -110,7 +122,7 @@ namespace Rss
     public long ChannelID
     {
       get { return channelId; }
-      set { channelId = RssDefault.Check(value); }
+      set { channelId = RssDefault.Check(value); Status = RssStatus.Changed; }
     }
 
     /// <summary>Title of the item</summary>
@@ -118,93 +130,147 @@ namespace Rss
     public string Title
     {
       get { return title; }
-      set { title = RssDefault.Check(value); }
+      set { if (null != value && value.Length > 0) { title = RssDefault.Check(value).Trim(); Status = RssStatus.Changed; } }
     }
     /// <summary>URL of the item</summary>
     /// <remarks>Maximum length is 500 (For RSS 0.91)</remarks>
     public Uri Link
     {
       get { return link; }
-      set { link = RssDefault.Check(value); }
+      set
+      {
+        link = RssDefault.Check(value);
+
+        if (link != null &&
+            link.OriginalString != null &&
+           !link.OriginalString.Equals(string.Empty) &&
+            Status == RssStatus.Update)
+        {
+          String desc = String.Empty;
+
+          Util.MethodInvoker boilerpipeDelegate = new Util.MethodInvoker(delegate()
+          {
+            desc = Boilerpipe.Oneliner(link.OriginalString);
+          });
+
+          boilerpipeDelegate.BeginInvoke(new AsyncCallback(delegate(IAsyncResult ar)
+          {
+            boilerpipeDelegate.EndInvoke(ar);
+            description = desc;
+            canSave = true;
+            OnItemDownloadCompleted();
+          }),
+            boilerpipeDelegate);
+        }
+        Status = RssStatus.Changed;
+      }
     }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    protected void OnItemDownloadCompleted()
+    {
+      if (null != ItemDownloadCompleted)
+      {
+        ItemDownloadCompleted();
+      }
+    }
+
     /// <summary>Item synopsis</summary>
     /// <remarks>Maximum length is 500 (For RSS 0.91)</remarks>
     public string Description
     {
       get { return description; }
-      set { description = RssDefault.Check(value); }
+      set { description = RssDefault.Check(value).Trim(); Status = RssStatus.Changed; }
     }
     /// <summary>Email address of the author of the item</summary>
     public string Author
     {
       get { return author; }
-      set { author = RssDefault.Check(value); }
+      set { author = RssDefault.Check(value).Trim(); Status = RssStatus.Changed; }
     }
     /// <summary>Provide information regarding the location of the subject matter of the channel in a taxonomy</summary>
     public RssCategoryCollection Categories
     {
       get { return categories; }
-      set { categories = value; }
+      set { categories = value; Status = RssStatus.Changed; }
     }
     /// <summary>URL of a page for comments relating to the item</summary>
     public string Comments
     {
       get { return comments; }
-      set { comments = RssDefault.Check(value); }
+      set { comments = RssDefault.Check(value).Trim(); Status = RssStatus.Changed; }
     }
     /// <summary>Describes an items source</summary>
     public RssSource Source
     {
       get { return source; }
-      set { source = value; }
+      set { source = value; Status = RssStatus.Changed; }
     }
     /// <summary>A reference to an attachments to the item</summary>
     public RssEnclosureCollection Enclosures
     {
       get { return enclosures; }
-      set { enclosures = value; }
+      set { enclosures = value; Status = RssStatus.Changed; }
     }
     /// <summary>A string that uniquely identifies the item</summary>
     public RssGuid Guid
     {
       get { return guid; }
-      set { guid = value; }
+      set { guid = value; Status = RssStatus.Changed; }
     }
     /// <summary>Indicates when the item was published</summary>
     public DateTime PubDate
     {
       get { return pubDate; }
-      set { pubDate = value; }
+      set { pubDate = value; Status = RssStatus.Changed; }
     }
 
     /// <summary>Identifies the person or entity who wrote an item</summary>
     public string Creator
     {
       get { return creator; }
-      set { creator = value; }
+      set { creator = value.Trim(); Status = RssStatus.Changed; }
     }
 
     /// <summary>Identifies the number of comments received in response to the item</summary>
     public int CommentCount
     {
       get { return commentCount; }
-      set { commentCount = value; }
+      set { commentCount = value; Status = RssStatus.Changed; }
     }
 
     /// <summary>Identifies the URL of a web page that contains comments received in response to the item</summary>
     public string CommentRss
     {
       get { return commentRss; }
-      set { commentRss = value; }
+      set { commentRss = value.Trim(); Status = RssStatus.Changed; }
     }
 
     /// <summary>Identifies the API URL of a web page that contains comments received in response to the item</summary>
     public string CommentApiUrl
     {
       get { return commentApiUrl; }
-      set { commentApiUrl = value; }
+      set { commentApiUrl = value.Trim(); Status = RssStatus.Changed; }
     }
 
+    /// <summary>
+    /// Indicate if item is modified.
+    /// </summary>
+    public RssStatus Status
+    {
+      get { return status; }
+      set { status = value; }
+    }
+
+    /// <summary>
+    /// Indicate if item can be saved.
+    /// </summary>
+    public bool CanSave
+    {
+      get { return canSave; }
+    }
 
     #endregion
 

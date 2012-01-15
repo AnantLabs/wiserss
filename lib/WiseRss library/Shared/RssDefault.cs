@@ -41,15 +41,21 @@ namespace Rss
     public const string String = "";
 
     /// <summary>
-    /// >Default value for an short in all RSS classes
+    /// Default value for a bool in all RSS classes.
+    /// </summary>
+    /// <remarks>If an element in the RSS class library has the value of RssDefault.Bool, consider the element as "not entered", "null", or empty.</remarks>
+    public const bool Bool = false;
+
+    /// <summary>
+    /// Default value for a short in all RSS classes
     /// </summary>
     /// <remarks>If an element in the RSS class library has the value of RssDefault.Short, consider the element as "not entered", "null", or empty.</remarks>
-    public const short Short = -1;
+    public const short Short = 0;
 
     /// <summary>Default value for an int in all RSS classes</summary>
     /// <value>-1</value>
     /// <remarks>If an element in the RSS class library has the value of RssDefault.Int, consider the element as "not entered", "null", or empty.</remarks>
-    public const int Int = -1;
+    public const int Int = 0;
     
     /// <summary>Default value for long in all RSS classes</summary>
     /// <value>0</value>
@@ -65,6 +71,16 @@ namespace Rss
     /// <value>string.Empty</value>
     /// <remarks>If an element in the RSS class library has the value of RssDefault.Uri, consider the element as "not entered", "null", or empty.</remarks>
     public static readonly Uri Uri = new Uri("http://localhost/");
+
+    /// <summary>
+    /// Verifies the bool passed is false or true
+    /// </summary>
+    /// <param name="input">RssDefault.Bool if input is false, otherwise input</param>
+    /// <returns>Method is used in properties to prevent a non false/true value</returns>
+    public static bool Check(bool input)
+    {
+      return input == false ? Bool : input;
+    }
 
     /// <summary>Verifies the string passed is not null</summary>
     /// <param name="input">string to verify</param>

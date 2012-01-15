@@ -51,13 +51,14 @@ namespace Rss
     private string docs = RssDefault.String;
     private RssCloud cloud = new RssCloud();
     private int timeToLive = RssDefault.Int;
-    private RssImage image = null;
+    private RssImage image = new RssImage();
     private RssTextInput textInput = new RssTextInput();
     private Hour skipHours = new Hour();
     private Day skipDays = new Day();
     private string rating = RssDefault.String;
     private RssItemCollection items = new RssItemCollection();
-    private bool favorite;
+    private bool favorite = RssDefault.Bool;
+    private RssStatus status = RssStatus.Unchanged;
 
     /// <summary>Initialize a new instance of the RssChannel class</summary>
     public RssChannel() { }
@@ -70,12 +71,6 @@ namespace Rss
     /// <param name="link">Link.</param>
     public RssChannel(string title, string description, Uri link)
     {
-      if (title == null) throw new ArgumentNullException("title");
-      if (description == null) throw new ArgumentNullException("description");
-      if (link == null) throw new ArgumentNullException("link");
-      if (title.Length == 0) throw new ArgumentException("A non zero-length string is required.", title);
-      if (description.Length == 0) throw new ArgumentException("A non zero-length string is required.", description);
-
       this.title = title;
       this.description = description;
       this.link = link;
@@ -87,7 +82,7 @@ namespace Rss
     public long ID
     {
       get { return id; }
-      set { id = RssDefault.Check(value); }
+      set { id = RssDefault.Check(value); Status = RssStatus.Changed; }
     }
 
     /// <summary>The name of the channel</summary>
@@ -95,21 +90,21 @@ namespace Rss
     public string Title
     {
       get { return title; }
-      set { title = RssDefault.Check(value); }
+      set { if (null != value && value.Length > 0) { title = RssDefault.Check(value).Trim(); Status = RssStatus.Changed; } }
     }
     /// <summary>URL of the website named in the title</summary>
     /// <remarks>Maximum length is 500 characters (For RSS 0.91)</remarks>
     public Uri Link
     {
       get { return link; }
-      set { link = RssDefault.Check(value); }
+      set { link = RssDefault.Check(value); Status = RssStatus.Changed; }
     }
     /// <summary>Description of the channel</summary>
     /// <remarks>Maximum length is 500 characters (For RSS 0.91)</remarks>
     public string Description
     {
       get { return description; }
-      set { description = RssDefault.Check(value); }
+      set { description = RssDefault.Check(value).Trim(); Status = RssStatus.Changed; }
     }
     /// <summary>
     /// The language ID the channel belongs to.
@@ -117,7 +112,7 @@ namespace Rss
     public long LanguageID
     {
       get { return languageId; }
-      set { languageId = RssDefault.Check(value); }
+      set { languageId = RssDefault.Check(value); Status = RssStatus.Changed; }
     }
 
     /// <summary>
@@ -126,21 +121,21 @@ namespace Rss
     public string Language
     {
       get { return language; }
-      set { language = RssDefault.Check(value); }
+      set { language = RssDefault.Check(value).Trim(); Status = RssStatus.Changed; }
     }
 
     /// <summary>A link and description for a graphic icon that represent a channel</summary>
     public RssImage Image
     {
       get { return image; }
-      set { image = value; }
+      set { image = value; Status = RssStatus.Changed; }
     }
     /// <summary>Copyright notice for content in the channel</summary>
     /// <remarks>Maximum length is 100 (For RSS 0.91)</remarks>
     public string Copyright
     {
       get { return copyright; }
-      set { copyright = RssDefault.Check(value); }
+      set { copyright = RssDefault.Check(value).Trim(); Status = RssStatus.Changed; }
     }
     /// <summary>The email address of the managing editor of the channel, the person to contact for editorial inquiries</summary>
     /// <remarks>
@@ -151,7 +146,7 @@ namespace Rss
     public string ManagingEditor
     {
       get { return managingEditor; }
-      set { managingEditor = RssDefault.Check(value); }
+      set { managingEditor = RssDefault.Check(value).Trim(); Status = RssStatus.Changed; }
     }
     /// <summary>The email address of the webmaster for the channel</summary>
     /// <remarks>
@@ -163,76 +158,76 @@ namespace Rss
     public string WebMaster
     {
       get { return webMaster; }
-      set { webMaster = RssDefault.Check(value); }
+      set { webMaster = RssDefault.Check(value).Trim(); Status = RssStatus.Changed; }
     }
     /// <summary>The PICS rating for the channel</summary>
     /// <remarks>Maximum length is 500 (For RSS 0.91)</remarks>
     public string Rating
     {
       get { return rating; }
-      set { rating = RssDefault.Check(value); }
+      set { rating = RssDefault.Check(value).Trim(); Status = RssStatus.Changed; }
     }
     /// <summary>The publication date for the content in the channel, expressed as the coordinated universal time (UTC)</summary>
     public DateTime PubDate
     {
       get { return pubDate; }
-      set { pubDate = value; }
+      set { pubDate = value; Status = RssStatus.Changed; }
     }
     /// <summary>The date-time the last time the content of the channel changed, expressed as the coordinated universal time (UTC)</summary>
     public DateTime LastBuildDate
     {
       get { return lastBuildDate; }
-      set { lastBuildDate = value; }
+      set { lastBuildDate = value; Status = RssStatus.Changed; }
     }
     /// <summary>One or more categories the channel belongs to.</summary>
     public RssCategoryCollection Categories
     {
       get { return categories; }
-      set { categories = value; }
+      set { categories = value; Status = RssStatus.Changed; }
     }
     /// <summary>A string indicating the program used to generate the channel</summary>
     public string Generator
     {
       get { return generator; }
-      set { generator = RssDefault.Check(value); }
+      set { generator = RssDefault.Check(value).Trim(); Status = RssStatus.Changed; }
     }
     /// <summary>A URL, points to the documentation for the format used in the RSS file</summary>
     /// <remarks>Maximum length is 500 (For RSS 0.91).</remarks>
     public string Docs
     {
       get { return docs; }
-      set { docs = RssDefault.Check(value); }
+      set { docs = RssDefault.Check(value).Trim(); Status = RssStatus.Changed; }
     }
     /// <summary>Provides information about an HTTP GET feature, typically for a search or subscription</summary>
     public RssTextInput TextInput
     {
       get { return textInput; }
-      set { textInput = value; }
+      set { textInput = value; Status = RssStatus.Changed; }
     }
     /// <summary>Readers should not read the channel during days listed. (UTC)</summary>
     public Day SkipDays
     {
       get { return skipDays; }
-      set { skipDays = value; }
+      set { skipDays = value; Status = RssStatus.Changed; }
     }
     /// <summary>Readers should not read the channel during hours listed (UTC)</summary>
     /// <remarks>Represents a time in UTC - 1.</remarks>
     public Hour SkipHours
     {
       get { return skipHours; }
-      set { skipHours = value; }
+      set { skipHours = value; Status = RssStatus.Changed; }
     }
     /// <summary>Allow processes to register with a cloud to be notified of updates to the channel</summary>
     public RssCloud Cloud
     {
       get { return cloud; }
-      set { cloud = value; }
+      set { cloud = value; Status = RssStatus.Changed; }
     }
     /// <summary>The number of minutes that a channel can be cached.</summary>
     public int TimeToLive
     {
       get { return timeToLive; }
-      set { timeToLive = RssDefault.Check(value); }
+      set { timeToLive = RssDefault.Check(value); Status = RssStatus.Changed; }
     }
     /// <summary>All items within the channel</summary>
     public RssItemCollection Items
@@ -243,7 +238,30 @@ namespace Rss
     public bool Favorite
     {
       get { return favorite; }
-      set { favorite = value; }
+      set { favorite = RssDefault.Check(value); Status = RssStatus.Changed; }
+    }
+
+    /// <summary>
+    /// Indicate if channel is modified
+    /// </summary>
+    public RssStatus Status
+    {
+      get { return status; }
+      set { status = value; }
+    }
+
+    /// <summary>
+    /// Return true when object is usable,
+    /// otherwise return false.
+    /// </summary>
+    public bool IsUsable
+    {
+      get
+      {
+        return !(title == null || description == null ||
+                 link == null || title.Length == 0 ||
+                 description.Length == 0);
+      }
     }
 
     /// <summary>Returns a System.String that represents the collection of <see cref="RssChannel"/> objects.</summary>

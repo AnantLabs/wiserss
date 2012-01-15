@@ -6,6 +6,8 @@ namespace Business
   public class RssObject
   {
     private DataReader reader = null;
+    private System.Collections.Generic.Dictionary<string, RssChannel> dictChannels = null;
+    private System.Collections.Generic.Dictionary<string, RssItem> dictItems = null;
     private RssChannelCollection channels = null;
     private RssCategoryCollection categories = null;
     private RssLanguageCollection languages = null;
@@ -16,9 +18,17 @@ namespace Business
     public RssObject()
     {
       reader = new DataReader();
-      channels = reader.GetRssChannels();
+      channels = new RssChannelCollection();
       categories = reader.GetCategories();
       languages = reader.GetLanguages();
+      dictChannels = new System.Collections.Generic.Dictionary<string, RssChannel>();
+      dictItems = new System.Collections.Generic.Dictionary<string, RssItem>();
+
+      // add references to dictionary
+      foreach (RssChannel channel in reader.GetRssChannels())
+      {
+        AddChannel(channel);
+      }
     }
 
     public DataReader Reader
@@ -29,6 +39,45 @@ namespace Business
     public RssChannelCollection Channels
     {
       get { return channels; }
+    }
+
+    public RssChannel GetChannel(string channelName)
+    {
+      if (dictChannels.ContainsKey(channelName))
+      {
+        return dictChannels[channelName];
+      }
+      return null;
+    }
+
+    private bool AddChannel(RssChannel channel)
+    {
+      string shortTitle = channel.Title.Substring(0,
+          System.Math.Min(channel.Title.Length, 99));
+
+      if (!dictChannels.ContainsKey(shortTitle))
+      {
+        dictChannels.Add(shortTitle, channel);
+        channels.Add(channel);
+
+        foreach (RssItem item in channel.Items)
+        {
+          dictItems.Add(shortTitle +
+            item.Title.Substring(0, System.Math.Min(item.Title.Length, 99)),
+            item);
+        }
+        return true;
+      }
+      return false;
+    }
+
+    public RssItem GetItem(string itemName)
+    {
+      if (dictItems.ContainsKey(itemName))
+      {
+        return dictItems[itemName];
+      }
+      return null;
     }
 
     public RssCategoryCollection Categories
@@ -89,11 +138,21 @@ namespace Business
       }
     }
 
+    public void InsertNewChannel(RssChannel channel)
+    {
+      bool res = AddChannel(channel);
+
+      if (res && (channel.Status != RssStatus.Unchanged))
+      {
+        Reader.InsertRssChannel(channel);
+      }
+    }
+
     public void InsertNewChannels()
     {
       foreach (RssChannel channel in Channels)
       {
-        if (channel.ID == 0)
+        if (channel.Status != RssStatus.Unchanged)
         {
           Reader.InsertRssChannel(channel);
         }
@@ -104,12 +163,16 @@ namespace Business
     {
       foreach (RssChannel channel in Channels)
       {
-        foreach (RssItem item in channel.Items)
+        if (channel.Status != RssStatus.Unchanged)
         {
-          if (item.ID == 0)
+          Reader.UpdateRssChannel(channel);
+          foreach (RssItem item in channel.Items)
           {
-            item.ChannelID = channel.ID;
-            Reader.InsertRssItem(item);
+            if (item.Status != RssStatus.Unchanged)
+            {
+              item.ChannelID = channel.ID;
+              Reader.InsertRssItem(item);
+            }
           }
         }
       }

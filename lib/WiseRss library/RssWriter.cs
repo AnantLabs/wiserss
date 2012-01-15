@@ -459,18 +459,6 @@ namespace Rss
       }
       WriteElement("pubDate", item.PubDate, false);
 
-      foreach (RssModule rssModule in this._rssModules)
-      {
-        if (rssModule.IsBoundTo(channelHashCode))
-        {
-          foreach (RssModuleItemCollection rssModuleItemCollection in rssModule.ItemExtensions)
-          {
-            if (rssModuleItemCollection.IsBoundTo(item.GetHashCode()))
-              writeSubElements(rssModuleItemCollection, rssModule.NamespacePrefix);
-          }
-        }
-      }
-
       Writer.WriteEndElement();
       Writer.Flush();
     }

@@ -1,32 +1,3 @@
-/* RssImage.cs
- * ===========
- * 
- * RSS.NET (http://rss-net.sf.net/)
- * Copyright © 2002 - 2005 George Tsiokos & Dave Purrington. All Rights Reserved.
- * 
- * RSS 2.0 (http://blogs.law.harvard.edu/tech/rss)
- * RSS 2.0 is offered by the Berkman Center for Internet & Society at 
- * Harvard Law School under the terms of the Attribution/Share Alike 
- * Creative Commons license.
- * 
- * Permission is hereby granted, free of charge, to any person obtaining 
- * a copy of this software and associated documentation files (the "Software"), 
- * to deal in the Software without restriction, including without limitation 
- * the rights to use, copy, modify, merge, publish, distribute, sublicense, 
- * and/or sell copies of the Software, and to permit persons to whom the 
- * Software is furnished to do so, subject to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- * 
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL 
- * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, 
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN 
- * THE SOFTWARE.
-*/
 using System;
 
 namespace Rss
@@ -35,15 +6,31 @@ namespace Rss
   [Serializable()]
   public class RssImage : RssElement
   {
+    private long id = RssDefault.Long;
     private string title = RssDefault.String;
     private string description = RssDefault.String;
     private Uri uri = RssDefault.Uri;
     private Uri link = RssDefault.Uri;
     private int width = RssDefault.Int;
     private int height = RssDefault.Int;
+    private System.IO.MemoryStream image = new System.IO.MemoryStream();
+    private long rssChannelId = RssDefault.Long;
+    private string path = RssDefault.String;
+    private RssStatus status = RssStatus.Unchanged;
+    private bool canSave = RssDefault.Bool;
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public delegate void ImageDownloadCompletedHandler();
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public event ImageDownloadCompletedHandler ImageDownloadCompleted;
 
     /// <summary>Initialize a new instance of the RssImage class.</summary>
-    internal RssImage() { }
+    public RssImage() { }
 
     /// <summary>
     /// Creates a new <see cref="RssImage"/> instance.
@@ -53,55 +40,203 @@ namespace Rss
     /// <param name="link">Link.</param>
     public RssImage(string title, Uri uri, Uri link)
     {
-      if (title == null) throw new ArgumentNullException("title");
-      if (title.Length == 0) throw new ArgumentException("A non zero-length string is required.", "title");
-      if (uri == null) throw new ArgumentNullException("uri");
-      if (link == null) throw new ArgumentNullException("link");
       this.title = title;
       this.uri = uri;
       this.link = link;
+      Status = RssStatus.Changed;
     }
 
-    /// <summary>The URL of a GIF, JPEG or PNG image that represents the channel.</summary>
-    /// <remarks>Maximum length is 500 (For RSS 0.91).</remarks>
+    /// <summary>The image that represents the channel.</summary>
     public Uri Url
     {
       get { return uri; }
-      set { uri = RssDefault.Check(value); }
+      set
+      {
+        uri = RssDefault.Check(value);
+
+        if (Status == RssStatus.Update)
+        {
+          // get image asynchronously
+          Async.MakeRequest(uri, callbackState =>
+          {
+            if (callbackState.RequestTimedOut)
+            {
+#if DEBUG
+              Console.WriteLine("Timed out!");
+#endif
+            }
+            else if (callbackState.Exception != null)
+            {
+#if DEBUG
+              Console.WriteLine(callbackState.Exception);
+#endif
+            }
+            else
+            {
+              Image = new System.IO.MemoryStream(
+                Async.ReadFully(callbackState.ResponseStream,
+                8192));
+
+              try
+              {
+                WriteImage();
+              }
+              catch (Exception) { }
+            }
+          }, true, 10000);
+        }
+        Status = RssStatus.Changed;
+      }
     }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    protected void OnImageDownloadCompleted()
+    {
+      if (null != ImageDownloadCompleted)
+      {
+        ImageDownloadCompleted();
+      }
+    }
+
     /// <summary>Describes the image, it's used in the ALT attribute of the HTML img tag when the channel is rendered in HTML.</summary>
     /// <remarks>Maximum length is 100 (For RSS 0.91).</remarks>
     public string Title
     {
       get { return title; }
-      set { title = RssDefault.Check(value); }
+      set { title = RssDefault.Check(value); Status = RssStatus.Changed; }
     }
     /// <summary>The URL of the site, when the channel is rendered, the image is a link to the site.</summary>
-    /// <remarks>Maximum length is 500 (For RSS 0.91).</remarks>
     public Uri Link
     {
       get { return link; }
-      set { link = RssDefault.Check(value); }
+      set { link = RssDefault.Check(value); Status = RssStatus.Changed; }
     }
     /// <summary>Contains text that is included in the TITLE attribute of the link formed around the image in the HTML rendering.</summary>
     public string Description
     {
       get { return description; }
-      set { description = RssDefault.Check(value); }
+      set { description = RssDefault.Check(value).Trim(); Status = RssStatus.Changed; }
     }
     /// <summary>Width of image in pixels</summary>
-    /// <remarks>Maximum value for height is 400 (For RSS 0.91)</remarks>
     public int Width
     {
       get { return width; }
-      set { width = RssDefault.Check(value); }
+      set { width = RssDefault.Check(value); Status = RssStatus.Changed; }
     }
     /// <summary>Height of image in pixels</summary>
-    /// <remarks>Maximum value for width is 144 (For RSS 0.91)</remarks>
     public int Height
     {
       get { return height; }
-      set { height = RssDefault.Check(value); }
+      set { height = RssDefault.Check(value); Status = RssStatus.Changed; }
+    }
+
+    /// <summary>
+    /// ID of the image.
+    /// </summary>
+    public long ID
+    {
+      get { return id; }
+      set { id = value; Status = RssStatus.Changed; }
+    }
+
+    /// <summary>
+    /// Rss channel ID of the image.
+    /// </summary>
+    public long RssChannelID
+    {
+      get { return rssChannelId; }
+      set { rssChannelId = value; Status = RssStatus.Changed; }
+    }
+
+    /// <summary>
+    /// Reference to the image in RAM.
+    /// </summary>
+    public System.IO.MemoryStream Image
+    {
+      get { return image; }
+      set { image = value; Status = RssStatus.Changed; }
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public string Path
+    {
+      get { return path; }
+      set { path = value; }
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public RssStatus Status
+    {
+      get { return status; }
+      set { status = value; }
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public bool CanSave
+    {
+      get { return canSave; }
+    }
+
+    /// <summary>
+    /// Return true when object is usable,
+    /// otherwise return false.
+    /// </summary>
+    public bool IsUsable
+    {
+      get
+      {
+        return !(title == null || title.Length == 0 ||
+                 uri == null || link == null ||
+                 uri.Equals(RssDefault.Uri));
+      }
+    }
+
+    private void WriteImage()
+    {
+      byte[] channelPlainTextBytes = System.Text.Encoding.UTF8.GetBytes(Link.OriginalString);
+      Path = System.IO.Path.GetDirectoryName(
+        System.Reflection.Assembly.GetAssembly(typeof(RssImage)).CodeBase) +
+        "\\img\\" + Util.String.WindowsPath(Convert.ToBase64String(channelPlainTextBytes));
+      
+      if (Path.StartsWith("file:\\"))
+      {
+        Path = Path.Substring(6);
+      }
+
+      if (System.IO.Directory.Exists(Path))
+      {
+        byte[] imagePlainTextBytes = System.Text.Encoding.UTF8.GetBytes(Link.OriginalString);
+        Path += "\\" + Util.String.WindowsPath(Convert.ToBase64String(imagePlainTextBytes));
+
+        System.IO.FileStream fs = new System.IO.FileStream(Path,
+          System.IO.FileMode.Create,
+          System.IO.FileAccess.Write,
+          System.IO.FileShare.ReadWrite);
+        {
+          fs.BeginWrite(Image.ToArray(),
+            0,
+            (int)Image.Length,
+            new AsyncCallback(delegate(IAsyncResult ar)
+          {
+            using (System.IO.FileStream s = (System.IO.FileStream)ar.AsyncState)
+            {
+              s.EndWrite(ar);
+              canSave = true;
+              s.Close();
+              OnImageDownloadCompleted();
+            }
+          }),
+            fs);
+        }
+      }
     }
   }
 }

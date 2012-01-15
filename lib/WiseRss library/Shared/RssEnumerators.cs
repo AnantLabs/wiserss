@@ -66,4 +66,26 @@ namespace Rss
     /// <summary>Really Simple Syndication (RSS) 2.0</summary>
     RSS20
   }
+
+  /// <summary>
+  /// Indicate this object status.
+  /// </summary>
+  [Serializable()]
+  public enum RssStatus
+  {
+    /// <summary>
+    /// this object is not modified
+    /// </summary>
+    Unchanged,
+
+    /// <summary>
+    /// this object is modified
+    /// </summary>
+    Changed,
+
+    /// <summary>
+    /// 
+    /// </summary>
+    Update,
+  }
 }

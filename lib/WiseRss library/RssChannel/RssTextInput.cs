@@ -43,7 +43,7 @@ namespace Rss
     private Uri link = RssDefault.Uri;
 
     /// <summary>Initialize a new instance of the RssTextInput class</summary>
-    internal RssTextInput() { }
+    public RssTextInput() { }
 
     /// <summary>
     /// Creates a new <see cref="RssTextInput"/> instance.

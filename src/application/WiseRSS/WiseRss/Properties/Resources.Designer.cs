@@ -67,6 +67,13 @@ namespace WiseRss.Properties {
             }
         }
         
+        internal static System.Drawing.Bitmap disable_bookmarks_icon {
+            get {
+                object obj = ResourceManager.GetObject("disable_bookmarks_icon", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         internal static System.Drawing.Bitmap facebook_icon {
             get {
                 object obj = ResourceManager.GetObject("facebook_icon", resourceCulture);

@@ -27,7 +27,7 @@ namespace WiseRss
         {
           if (url is string)
           {
-            frmParent.LstNewFeeds.Add((string)url);
+            frmParent.ListNewFeeds.Add((string)url);
           }
         }
       }
