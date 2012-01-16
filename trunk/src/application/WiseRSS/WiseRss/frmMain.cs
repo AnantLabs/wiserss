@@ -52,7 +52,6 @@ namespace WiseRss
     public frmMain()
     {
       InitializeComponent();
-
       LoadTreeView();
 
       // The Top Posts widgets and the PostRank APIs is disabled.
@@ -148,7 +147,6 @@ namespace WiseRss
     private void Form1_FormClosing(object sender, FormClosingEventArgs e)
     {
       ListNewFeeds.Clear();
-      WRssObject.InsertNewItems();
     }
 
     private void LoadRichTextBoxIcons()
@@ -220,7 +218,7 @@ namespace WiseRss
           {
             if (-1 == TreeNodeCollectionContains(nodeCategories, category.Name))
             {
-              nodeCategories.Add(category.Name);
+                this.Invoke((MethodInvoker)delegate() { nodeCategories.Add(category.Name); });
             }
           }
 
@@ -273,7 +271,7 @@ namespace WiseRss
           }
 
           // insert new channel
-          WRssObject.InsertNewChannel(channel);
+          WRssObject.InsertNewChannel(channel, feed.Url);
         }
       }
       lstNewFeeds.Clear();
@@ -364,6 +362,8 @@ namespace WiseRss
       if (item != null)
       {
         rchTxtContent.AppendText(item.Description);
+        selItem = item;
+
       }
       else
       {
@@ -490,10 +490,10 @@ namespace WiseRss
         }
       }
     }
-
+      
     private void btnTag_Click(object sender, EventArgs e)
     {
-
+        new RssObject().InsertNewItems();
     }
 
     private void btnTranslate_Click(object sender, EventArgs e)
