@@ -500,5 +500,22 @@ namespace WiseRss
     {
 
     }
+
+    private void saveAsToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+        try
+        {
+            if (saveFileDialog1.ShowDialog() == DialogResult.OK)
+            {
+                rchTxtContent.SaveFile(saveFileDialog1.FileName);
+            }
+        }
+        catch (Exception)
+        {
+            
+        }
+
+
+    }
   }
 }
