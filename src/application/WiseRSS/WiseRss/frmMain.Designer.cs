@@ -28,9 +28,9 @@
     /// </summary>
     private void InitializeComponent()
     {
-        System.Windows.Forms.TreeNode treeNode1 = new System.Windows.Forms.TreeNode("Subscriptions", 0, 0);
-        System.Windows.Forms.TreeNode treeNode2 = new System.Windows.Forms.TreeNode("Tags", 1, 1);
-        System.Windows.Forms.TreeNode treeNode3 = new System.Windows.Forms.TreeNode("Bookmarks", 2, 2);
+        System.Windows.Forms.TreeNode treeNode16 = new System.Windows.Forms.TreeNode("Subscriptions", 0, 0);
+        System.Windows.Forms.TreeNode treeNode17 = new System.Windows.Forms.TreeNode("Tags", 1, 1);
+        System.Windows.Forms.TreeNode treeNode18 = new System.Windows.Forms.TreeNode("Bookmarks", 2, 2);
         this.menuStrip1 = new System.Windows.Forms.MenuStrip();
         this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
         this.addToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
@@ -52,6 +52,7 @@
         this.btnTranslate = new System.Windows.Forms.Button();
         this.cbxTranslate = new System.Windows.Forms.ComboBox();
         this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+        this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
         this.menuStrip1.SuspendLayout();
         ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
         this.splitContainer1.Panel1.SuspendLayout();
@@ -104,6 +105,7 @@
         this.saveAsToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
         this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(162, 22);
         this.saveAsToolStripMenuItem.Text = "&Save As";
+        this.saveAsToolStripMenuItem.Click += new System.EventHandler(this.saveAsToolStripMenuItem_Click);
         // 
         // exitToolStripMenuItem1
         // 
@@ -139,22 +141,22 @@
         this.treeView1.ItemHeight = 16;
         this.treeView1.Location = new System.Drawing.Point(3, 3);
         this.treeView1.Name = "treeView1";
-        treeNode1.ImageIndex = 0;
-        treeNode1.Name = "NodeSubscriptions";
-        treeNode1.SelectedImageIndex = 0;
-        treeNode1.Text = "Subscriptions";
-        treeNode2.ImageIndex = 1;
-        treeNode2.Name = "NodeTags";
-        treeNode2.SelectedImageIndex = 1;
-        treeNode2.Text = "Tags";
-        treeNode3.ImageIndex = 2;
-        treeNode3.Name = "NodeBookmarks";
-        treeNode3.SelectedImageIndex = 2;
-        treeNode3.Text = "Bookmarks";
+        treeNode16.ImageIndex = 0;
+        treeNode16.Name = "NodeSubscriptions";
+        treeNode16.SelectedImageIndex = 0;
+        treeNode16.Text = "Subscriptions";
+        treeNode17.ImageIndex = 1;
+        treeNode17.Name = "NodeTags";
+        treeNode17.SelectedImageIndex = 1;
+        treeNode17.Text = "Tags";
+        treeNode18.ImageIndex = 2;
+        treeNode18.Name = "NodeBookmarks";
+        treeNode18.SelectedImageIndex = 2;
+        treeNode18.Text = "Bookmarks";
         this.treeView1.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
-            treeNode1,
-            treeNode2,
-            treeNode3});
+            treeNode16,
+            treeNode17,
+            treeNode18});
         this.treeView1.ShowNodeToolTips = true;
         this.treeView1.Size = new System.Drawing.Size(270, 415);
         this.treeView1.TabIndex = 2;
@@ -289,6 +291,12 @@
         this.splitContainer1.SplitterDistance = 276;
         this.splitContainer1.TabIndex = 14;
         // 
+        // saveFileDialog1
+        // 
+        this.saveFileDialog1.Filter = "\"Text Files (*.txt)|*.txt|RTF Files (*.rtf)|*.rtf\"; ";
+        this.saveFileDialog1.InitialDirectory = "C:\\";
+        this.saveFileDialog1.RestoreDirectory = true;
+        // 
         // frmMain
         // 
         this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -342,6 +350,7 @@
     private System.Windows.Forms.Button btnTranslate;
     private System.Windows.Forms.ComboBox cbxTranslate;
     private System.Windows.Forms.SplitContainer splitContainer1;
+    private System.Windows.Forms.SaveFileDialog saveFileDialog1;
 
   }
 }
