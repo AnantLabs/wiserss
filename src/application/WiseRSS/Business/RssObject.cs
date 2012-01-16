@@ -204,11 +204,14 @@ namespace Business
                 {
                     if (channel.Status != RssStatus.Unchanged)
                     {
-                        Reader.UpdateRssChannel(channel1);
+                        channel.Status = RssStatus.Update;
+                        channel.Image.Status = RssStatus.Update;
+                        Reader.UpdateRssChannel(channel);
                         foreach (RssItem item in channel1.Items)
                         {
                             if (item.Status != RssStatus.Unchanged)
                             {
+                                item.Status = RssStatus.Update;
                                 item.ChannelID = channel.ID;
                                 Reader.InsertRssItem(item);
                             }
