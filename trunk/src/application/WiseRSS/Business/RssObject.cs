@@ -1,5 +1,6 @@
 ﻿using DataAccess;
 using Rss;
+using System;
 
 namespace Business
 {
@@ -17,8 +18,10 @@ namespace Business
     /// </summary>
     public RssObject()
     {
+      
       reader = new DataReader();
       channels = new RssChannelCollection();
+      InsertNewItems();
       categories = reader.GetCategories();
       languages = reader.GetLanguages();
       dictChannels = new System.Collections.Generic.Dictionary<string, RssChannel>();
@@ -62,9 +65,19 @@ namespace Business
 
         foreach (RssItem item in channel.Items)
         {
-          dictItems.Add(shortTitle +
-            item.Title.Substring(0, System.Math.Min(item.Title.Length, 99)),
-            item);
+            try
+            {
+                string itemName = shortTitle + item.Title.Substring(0, System.Math.Min(item.Title.Length, 99));
+                if (!dictItems.ContainsKey(itemName))
+                {
+                    dictItems.Add(itemName, item);
+                }
+            }
+            catch (System.Exception)
+            {
+                
+            }
+
         }
         return true;
       }
@@ -134,48 +147,84 @@ namespace Business
     {
       foreach (RssChannel channel in feed.Channels)
       {
-        Reader.InsertRssChannel(channel);
+        Reader.InsertRssChannel(channel, feed.Url);
       }
     }
 
-    public void InsertNewChannel(RssChannel channel)
+    public void InsertNewChannel(RssChannel channel, string feedUrl)
     {
       bool res = AddChannel(channel);
 
       if (res && (channel.Status != RssStatus.Unchanged))
       {
-        Reader.InsertRssChannel(channel);
+        Reader.InsertRssChannel(channel, feedUrl);
       }
     }
 
-    public void InsertNewChannels()
-    {
-      foreach (RssChannel channel in Channels)
-      {
-        if (channel.Status != RssStatus.Unchanged)
-        {
-          Reader.InsertRssChannel(channel);
-        }
-      }
-    }
+    //public void InsertNewChannels()
+    //{
+    //  foreach (RssChannel channel in Channels)
+    //  {
+    //    if (channel.Status != RssStatus.Unchanged)
+    //    {
+    //      Reader.InsertRssChannel(channel);
+    //    }
+    //  }
+    //}
+
+    //public void InsertNewItems()
+    //{
+    //  foreach (RssChannel channel in Channels)
+    //  {
+    //    if (channel.Status != RssStatus.Unchanged)
+    //    {
+    //      Reader.UpdateRssChannel(channel);
+    //      foreach (RssItem item in channel.Items)
+    //      {
+    //        if (item.Status != RssStatus.Unchanged)
+    //        {
+    //          item.ChannelID = channel.ID;
+    //          Reader.InsertRssItem(item);
+    //        }
+    //      }
+    //    }
+    //  }
+    //}
 
     public void InsertNewItems()
     {
-      foreach (RssChannel channel in Channels)
-      {
-        if (channel.Status != RssStatus.Unchanged)
+        foreach (RssChannel channel in GetChannels())
         {
-          Reader.UpdateRssChannel(channel);
-          foreach (RssItem item in channel.Items)
-          {
-            if (item.Status != RssStatus.Unchanged)
+            RssFeed feed = null;
+
+            try
             {
-              item.ChannelID = channel.ID;
-              Reader.InsertRssItem(item);
+                feed = RssFeed.Read(channel.Link.OriginalString);
+                foreach (RssChannel channel1 in feed.Channels)
+                {
+                    if (channel.Status != RssStatus.Unchanged)
+                    {
+                        Reader.UpdateRssChannel(channel1);
+                        foreach (RssItem item in channel1.Items)
+                        {
+                            if (item.Status != RssStatus.Unchanged)
+                            {
+                                item.ChannelID = channel.ID;
+                                Reader.InsertRssItem(item);
+                            }
+                        }
+                    }
+                }
             }
-          }
+            catch (Exception ex)
+            {
+#if DEBUG
+                new Util.Debug(new System.Diagnostics.StackTrace(true), ex.ToString()).Print();
+#endif
+                return;
+            }
+            
         }
-      }
     }
   }
 }
