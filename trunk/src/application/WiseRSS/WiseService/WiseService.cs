@@ -6,41 +6,38 @@ using System.Diagnostics;
 using System.Linq;
 using System.ServiceProcess;
 using System.Text;
-//using System.Timers;
+using Business;
+using System.Timers;
 
 namespace WiseService
 {
     public partial class WiseService : ServiceBase
     {
-        //Timer tmr = new Timer();
+        private Timer timer1 = new Timer();
+        private RssObject wRssObject = new RssObject();
 
         public WiseService()
         {
             InitializeComponent();
+            timer1.Elapsed += new ElapsedEventHandler(timer1_Elapsed);
+            timer1.Interval = 60000;
         }
 
         protected override void OnStart(string[] args)
         {
-            DebugMode();
-            tmr.Enabled = true;
+            timer1.Start();
         }
 
-        
+
 
         protected override void OnStop()
         {
+            timer1.Stop();
         }
 
-        private void tmr_Tick(object sender, EventArgs e)
+        private void timer1_Elapsed(object sender, EventArgs e)
         {
-            
+            wRssObject.InsertNewItems();
         }
-
-        [Conditional("DEBUG_SERVICE")]
-        private static void DebugMode()
-        {
-            Debugger.Break();
-        }
-
     }
 }

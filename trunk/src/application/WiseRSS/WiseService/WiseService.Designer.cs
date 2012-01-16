@@ -28,13 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
-            this.tmr = new System.Windows.Forms.Timer(this.components);
-            // 
-            // tmr
-            // 
-            this.tmr.Interval = 60000;
-            this.tmr.Tick += new System.EventHandler(this.tmr_Tick);
             // 
             // WiseService
             // 
@@ -44,6 +37,6 @@
 
         #endregion
 
-        private System.Windows.Forms.Timer tmr;
+
     }
 }
