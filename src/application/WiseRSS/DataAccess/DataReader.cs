@@ -111,8 +111,8 @@ namespace DataAccess
           p_name.Value = category.Name;
           cmd.Parameters.Add(p_name);
           MySqlParameter p_id = new MySqlParameter("p_id", MySqlDbType.UInt32);
-          cmd.Parameters["p_id"].Direction = System.Data.ParameterDirection.Output;
           cmd.Parameters.Add(p_id);
+          cmd.Parameters["p_id"].Direction = System.Data.ParameterDirection.Output;
           cmd.Connection.Open();
           cmd.ExecuteNonQuery();
           cmd.Connection.Close();
@@ -1400,7 +1400,7 @@ namespace DataAccess
       return res;
     }
 
-    public long InsertRssChannel(RssChannel channel)
+    public long InsertRssChannel(RssChannel channel, string feedUrl)
     {
       long res = RssDefault.Long;
 
@@ -1441,7 +1441,7 @@ namespace DataAccess
           parameters.Add(new Tuple<string, MySqlDbType, object, int>("p_generator", MySqlDbType.VarChar, channel.Generator, 255));
           parameters.Add(new Tuple<string, MySqlDbType, object, int>("p_language_id", MySqlDbType.UInt32, channel.LanguageID, 0));
           parameters.Add(new Tuple<string, MySqlDbType, object, int>("p_last_build_date", MySqlDbType.DateTime, channel.LastBuildDate, 0));
-          parameters.Add(new Tuple<string, MySqlDbType, object, int>("p_link", MySqlDbType.Text, channel.Link, 0));
+          parameters.Add(new Tuple<string, MySqlDbType, object, int>("p_link", MySqlDbType.Text, feedUrl, 0));
           parameters.Add(new Tuple<string, MySqlDbType, object, int>("p_managing_editor", MySqlDbType.Text, channel.ManagingEditor, 0));
           parameters.Add(new Tuple<string, MySqlDbType, object, int>("p_publication_date", MySqlDbType.DateTime, channel.PubDate, 0));
           parameters.Add(new Tuple<string, MySqlDbType, object, int>("p_rating", MySqlDbType.VarChar, channel.Rating, 255));
