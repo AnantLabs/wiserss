@@ -56,6 +56,7 @@ namespace Rss
     private int commentCount = RssDefault.Int;
     private string commentRss = RssDefault.String;
     private string commentApiUrl = RssDefault.String;
+    private bool favorite = RssDefault.Bool;
     private RssStatus status = RssStatus.Unchanged;
     private bool canSave = RssDefault.Bool;
 
@@ -255,13 +256,26 @@ namespace Rss
       set { commentApiUrl = value.Trim(); Status = RssStatus.Changed; }
     }
 
+    /// <summary>Indicate if item is marked as favorite (true=favorite)</summary>
+    public bool Favorite
+    {
+      get { return favorite; }
+      set { favorite = RssDefault.Check(value); Status = RssStatus.Changed; }
+    }
+
     /// <summary>
     /// Indicate if item is modified.
     /// </summary>
     public RssStatus Status
     {
       get { return status; }
-      set { status = value; }
+      set
+      {
+        if (status != RssStatus.Update)
+        {
+          status = value;
+        }
+      }
     }
 
     /// <summary>

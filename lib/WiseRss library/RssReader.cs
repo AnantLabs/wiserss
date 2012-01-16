@@ -61,6 +61,7 @@ namespace Rss
     private RssGuid guid = null;
     private RssCategory category = null;
     private RssItem item = null;
+    private string feedUrl = string.Empty;
 
     private void InitReader()
     {
@@ -113,6 +114,26 @@ namespace Rss
     {
       try
       {
+        reader = new XmlTextReader(stream);
+        InitReader();
+      }
+      catch (Exception)
+      {
+#if DEBUG
+        new Util.Debug(new System.Diagnostics.StackTrace(true), "ArgumentException: " + "Unable to retrieve file containing the RSS data").Print();
+#endif
+      }
+    }
+
+    /// <summary>Creates an instance of the RssReader class using the specified Stream.</summary>
+    /// <exception cref="ArgumentException">Occures when unable to retrieve file containing the RSS data.</exception>
+    /// <param name="stream">Stream to read from</param>
+    /// <param name="feedUrl">Feed url</param>
+    public RssReader(Stream stream, string feedUrl)
+    {
+      try
+      {
+        this.feedUrl = feedUrl;
         reader = new XmlTextReader(stream);
         InitReader();
       }
@@ -555,7 +576,8 @@ namespace Rss
                       case "link":
                         try
                         {
-                          channel.Link = new Uri(elementText.ToString());
+                          channel.Link = new Uri(feedUrl);
+                          //channel.Link = new Uri(elementText.ToString());
                         }
                         catch (Exception e)
                         {

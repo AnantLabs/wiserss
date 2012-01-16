@@ -217,7 +217,7 @@ namespace Rss
         RssReader reader = null;
         try
         {
-          reader = new RssReader(stream);
+          reader = new RssReader(stream, uri.OriginalString);
           do
           {
             element = reader.Read();
