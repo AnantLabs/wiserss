@@ -286,7 +286,6 @@ PROCEDURE InsertRssChannel(IN p_cloud_id INT UNSIGNED,
                            IN p_title TEXT,
                            IN p_ttl INTEGER UNSIGNED,
                            IN p_webmaster TEXT,
-                           IN p_favorite BIT,
                            OUT p_id INT UNSIGNED)
 BEGIN
 SET p_id = GetRssChannelID(p_link);
@@ -309,8 +308,7 @@ IF p_id = 0 THEN
               text_input_id,
               title,
               ttl,
-              webmaster,
-              favorite)
+              webmaster)
         VALUES(id,
               p_cloud_id,
               p_copyright,
@@ -328,8 +326,7 @@ IF p_id = 0 THEN
               p_text_input_id,
               p_title,
               p_ttl,
-              p_webmaster,
-              p_favorite);
+              p_webmaster);
 
   SET p_id = GetRssChannelID(p_link);
 END IF;
@@ -355,8 +352,7 @@ PROCEDURE UpdateRssChannel(IN p_id INT UNSIGNED,
                            IN p_text_input_id INT UNSIGNED,
                            IN p_title TEXT,
                            IN p_ttl INTEGER UNSIGNED,
-                           IN p_webmaster TEXT,
-                           IN p_favorite BIT)
+                           IN p_webmaster TEXT)
 BEGIN
 IF p_id > 0 THEN
   UPDATE rss_channels
@@ -375,8 +371,7 @@ IF p_id > 0 THEN
         text_input_id = p_text_input_id,
         title = p_title,
         ttl = p_ttl,
-        webmaster = p_webmaster,
-        favorite = p_favorite
+        webmaster = p_webmaster
   WHERE id = p_id;
 END IF;
 END $$
@@ -669,6 +664,7 @@ PROCEDURE InsertRssItem(IN p_channel_id INT UNSIGNED,
                         IN p_source TEXT,
                         IN p_publication_date DATETIME,
                         IN p_title TEXT,
+                        IN p_favorite BIT,
                         OUT p_id BIGINT UNSIGNED)
 BEGIN
 SET p_id = GetRssItemID(p_link);
@@ -683,7 +679,8 @@ IF p_id = 0 THEN
                         link,
                         source,
                         publication_date,
-                        title)
+                        title,
+                        favorite)
                  VALUES(id,
                         p_channel_id,
                         p_author,
@@ -694,7 +691,8 @@ IF p_id = 0 THEN
                         p_link,
                         p_source,
                         p_publication_date,
-                        p_title);
+                        p_title,
+                        p_favorite);
   SET p_id = GetRssItemID(p_link);
 END IF;
 END $$
@@ -712,7 +710,8 @@ PROCEDURE UpdateRssItem(IN p_id BIGINT UNSIGNED,
                         IN p_link TEXT,
                         IN p_source TEXT,
                         IN p_publication_date DATETIME,
-                        IN p_title TEXT)
+                        IN p_title TEXT,
+                        IN p_favorite BIT)
 BEGIN
 IF p_id > 0 THEN
   UPDATE rss_items
@@ -725,7 +724,8 @@ IF p_id > 0 THEN
         link = p_link,
         source = p_source,
         publication_date = p_publication_date,
-        title = p_title
+        title = p_title,
+        favorite = p_favorite
   WHERE id = p_id;
 END IF;
 END $$

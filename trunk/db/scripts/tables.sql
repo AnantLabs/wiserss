@@ -22,7 +22,6 @@ CREATE TABLE rss_channels (
   title TEXT NOT NULL COMMENT 'The name of the channel. Its how people refer to service',
   ttl INTEGER UNSIGNED COMMENT 'Number of minutes that indicates how long a channel can be cached before refreshing from the source',
   webmaster TEXT COMMENT 'Email address for person responsible for technical issues relating to channel',
-  favorite BIT COMMENT 'Specifies if the channel is marked as favorite (1=favorite)',
   count SMALLINT UNSIGNED NOT NULL COMMENT '',
   PRIMARY KEY (id),
   CONSTRAINT FK_cloud_id FOREIGN KEY (cloud_id) REFERENCES clouds(id)
@@ -55,6 +54,7 @@ CREATE TABLE rss_items (
   source TEXT COMMENT 'The RSS channel that the item came from',
   publication_date DATETIME COMMENT 'Indicates when the item was published',
   title TEXT NOT NULL COMMENT 'The title of the item',
+  favorite BIT COMMENT 'Specifies if the item is marked as favorite (1=favorite)',
   PRIMARY KEY (id),
   INDEX item_idx(id),
   INDEX channel_idx(channel_id),

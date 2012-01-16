@@ -9,6 +9,7 @@ namespace Business
     private DataReader reader = null;
     private System.Collections.Generic.Dictionary<string, RssChannel> dictChannels = null;
     private System.Collections.Generic.Dictionary<string, RssItem> dictItems = null;
+    private System.Collections.Generic.Dictionary<string, RssItem> dictBookmarks = null;
     private RssChannelCollection channels = null;
     private RssCategoryCollection categories = null;
     private RssLanguageCollection languages = null;
@@ -26,6 +27,7 @@ namespace Business
       languages = reader.GetLanguages();
       dictChannels = new System.Collections.Generic.Dictionary<string, RssChannel>();
       dictItems = new System.Collections.Generic.Dictionary<string, RssItem>();
+      dictBookmarks = new System.Collections.Generic.Dictionary<string, RssItem>();
 
       // add references to dictionary
       foreach (RssChannel channel in reader.GetRssChannels())
@@ -65,19 +67,18 @@ namespace Business
 
         foreach (RssItem item in channel.Items)
         {
-            try
-            {
-                string itemName = shortTitle + item.Title.Substring(0, System.Math.Min(item.Title.Length, 99));
-                if (!dictItems.ContainsKey(itemName))
-                {
-                    dictItems.Add(itemName, item);
-                }
-            }
-            catch (System.Exception)
-            {
-                
-            }
+          string itemName = shortTitle;
+          string itemShortTitle = item.Title.Substring(0, System.Math.Min(item.Title.Length, 99));
 
+          if (!dictItems.ContainsKey(itemName + itemShortTitle))
+          {
+            dictItems.Add(itemName + itemShortTitle, item);
+          }
+
+          if (!dictBookmarks.ContainsKey(itemShortTitle))
+          {
+            dictBookmarks.Add(itemShortTitle, item);
+          }
         }
         return true;
       }
@@ -89,6 +90,15 @@ namespace Business
       if (dictItems.ContainsKey(itemName))
       {
         return dictItems[itemName];
+      }
+      return null;
+    }
+
+    public RssItem GetBookmark(string itemName)
+    {
+      if (dictBookmarks.ContainsKey(itemName))
+      {
+        return dictBookmarks[itemName];
       }
       return null;
     }
@@ -193,41 +203,43 @@ namespace Business
 
     public void InsertNewItems()
     {
-        foreach (RssChannel channel in GetChannels())
-        {
-            RssFeed feed = null;
+      foreach (RssChannel channel in Channels)
+      {
+        RssFeed feed = null;
 
-            try
+        try
+        {
+          feed = RssFeed.Read(channel.Link.OriginalString);
+
+          foreach (RssChannel channel1 in feed.Channels)
+          {
+            if (channel.Status != RssStatus.Unchanged)
             {
-                feed = RssFeed.Read(channel.Link.OriginalString);
-                foreach (RssChannel channel1 in feed.Channels)
+              channel.Status = RssStatus.Update;
+              channel.Image.Status = RssStatus.Update;
+              Reader.UpdateRssChannel(channel1);
+
+              foreach (RssItem item in channel1.Items)
+              {
+                if (item.Status != RssStatus.Unchanged)
                 {
-                    if (channel.Status != RssStatus.Unchanged)
-                    {
-                        channel.Status = RssStatus.Update;
-                        channel.Image.Status = RssStatus.Update;
-                        Reader.UpdateRssChannel(channel);
-                        foreach (RssItem item in channel1.Items)
-                        {
-                            if (item.Status != RssStatus.Unchanged)
-                            {
-                                item.Status = RssStatus.Update;
-                                item.ChannelID = channel.ID;
-                                Reader.InsertRssItem(item);
-                            }
-                        }
-                    }
+                  item.ChannelID = channel.ID;
+                  item.Status = RssStatus.Update;
+                  Reader.InsertRssItem(item);
                 }
+              }
             }
-            catch (Exception ex)
-            {
-#if DEBUG
-                new Util.Debug(new System.Diagnostics.StackTrace(true), ex.ToString()).Print();
-#endif
-                return;
-            }
-            
+          }
         }
+        catch (Exception ex)
+        {
+#if DEBUG
+          new Util.Debug(new System.Diagnostics.StackTrace(true), ex.ToString()).Print();
+#endif
+          return;
+        }
+
+      }
     }
   }
 }

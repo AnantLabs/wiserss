@@ -123,11 +123,6 @@ namespace WiseRss
         node.ToolTipText = channel.Description.Substring(0,
           System.Math.Min(channel.Description.Length, 99));
 
-        if (channel.Favorite)
-        {
-          bookmarks.Add(node.Text);
-        }
-
         TreeNode childNode = null;
 
         foreach (RssItem item in channel.Items)
@@ -138,6 +133,12 @@ namespace WiseRss
           childNode.ToolTipText = item.Description.Substring(0,
             System.Math.Min(item.Description.Length, 99)) + "...";
           node.Nodes.Add(childNode);
+
+          // TODO: if not added
+          if (item.Favorite)
+          {
+            bookmarks.Add(node.Text);
+          }
         }
 
         nodes.Add(node);
@@ -218,7 +219,10 @@ namespace WiseRss
           {
             if (-1 == TreeNodeCollectionContains(nodeCategories, category.Name))
             {
+              if (!nodeCategories.ContainsKey(category.Name))
+              {
                 this.Invoke((MethodInvoker)delegate() { nodeCategories.Add(category.Name); });
+              }
             }
           }
 
@@ -258,7 +262,8 @@ namespace WiseRss
                 System.Math.Min(item.Title.Length, 99)));
               childNode.ToolTipText = item.Description.Substring(0,
                 System.Math.Min(item.Description.Length, 99));
-              node.Nodes.Add(childNode);
+
+              this.Invoke((MethodInvoker)delegate() { node.Nodes.Add(childNode); });
             }
             item.Status = RssStatus.Update;
           }
@@ -313,46 +318,42 @@ namespace WiseRss
     private void treeView1_AfterSelect(object sender, TreeViewEventArgs e)
     {
       TreeNode node = e.Node;
-
-      if (node == null)
-      {
-        return;
-      }
+      if (node == null) { return; }
 
       TreeNode parent = node.Parent;
+      if (parent == null) { return; }
 
-      if (parent == null)
-      {
-        return;
-      }
+      TreeNode parentParent = node.Parent.Parent;
 
       rchTxtContent.Clear();
       RssChannel channel = null;
       RssItem item = null;
 
-      if (parent.Text.Equals(treeView1.Nodes[0].Text))
+      // Node Subscriptions
+      if (parent.Text.Equals(treeView1.Nodes[0].Text) ||
+          (parentParent != null && parentParent.Text.Equals(treeView1.Nodes[0].Text)))
       {
-        channel = WRssObject.GetChannel(node.Text);
-      }
-      else
-      {
-        channel = WRssObject.GetChannel(parent.Text);
-        item = WRssObject.GetItem(parent.Text + node.Text);
+        if (parentParent == null)
+        {
+          channel = WRssObject.GetChannel(node.Text);
+          btnBookmark.Image = bitmaps[2];
+        }
+        else
+        {
+          channel = WRssObject.GetChannel(parent.Text);
+          item = WRssObject.GetItem(parent.Text + node.Text);
+          btnBookmark.Image = item.Favorite ? bitmaps[1] : bitmaps[2];
+        }
       }
 
-      if (channel == null)
+      // Node Bookmarks
+      if (parent.Text.Equals(treeView1.Nodes[2].Text))
       {
-        return;
+        //channel = WRssObject.GetChannel(parent.Text);
+        item = WRssObject.GetBookmark(node.Text);
       }
 
-      if (channel.Favorite)
-      {
-        btnBookmark.Image = bitmaps[1];
-      }
-      else
-      {
-        btnBookmark.Image = bitmaps[2];
-      }
+      if (channel == null) { return; }
 
       rchTxtContent.AppendText(channel.Title);
       rchTxtContent.AppendText(System.Environment.NewLine);
@@ -363,7 +364,6 @@ namespace WiseRss
       {
         rchTxtContent.AppendText(item.Description);
         selItem = item;
-
       }
       else
       {
@@ -374,8 +374,6 @@ namespace WiseRss
         rchTxtContent.AppendText(channel.Description);
       }
     }
-
-
 
     private void btnMail_Click(object sender, EventArgs e)
     {
@@ -389,7 +387,6 @@ namespace WiseRss
         catch (Exception) { }
       }
     }
-
 
     private void btnTwitt_Click(object sender, EventArgs e)
     {
@@ -454,38 +451,32 @@ namespace WiseRss
 
     private void btnBookmark_Click(object sender, EventArgs e)
     {
-      if (treeView1.SelectedNode != null && treeView1.SelectedNode.Parent != null &&
-         (treeView1.SelectedNode.Parent.Text.Equals("Subscriptions") ||
-          treeView1.SelectedNode.Parent.Parent != null && treeView1.SelectedNode.Parent.Parent.Text.Equals("Subscriptions"))
-         )
+      if (treeView1.SelectedNode != null &&
+          treeView1.SelectedNode.Parent != null &&
+          treeView1.SelectedNode.Parent.Parent != null &&
+          treeView1.SelectedNode.Parent.Parent.Text.Equals("Subscriptions"))
       {
-        RssChannel channel = WRssObject.GetChannel(treeView1.SelectedNode.Text);
+        RssItem item = WRssObject.GetItem(treeView1.SelectedNode.Parent.Text + treeView1.SelectedNode.Text);
 
-        if (channel == null)
+        Debug.Assert(item != null);
+
+        item.Favorite = !item.Favorite;
+        TreeNodeCollection bookmarks = treeView1.Nodes["NodeBookmarks"].Nodes;
+
+        if (item.Favorite)
         {
-          channel = WRssObject.GetChannel(treeView1.SelectedNode.Parent.Text);
+          btnBookmark.Image = bitmaps[1];
+          bookmarks.Add(item.Title);
         }
-
-        if (channel != null)
+        else
         {
-          channel.Favorite = !channel.Favorite;
-          TreeNodeCollection bookmarks = treeView1.Nodes["NodeBookmarks"].Nodes;
+          btnBookmark.Image = bitmaps[2];
 
-          if (channel.Favorite)
+          int index = TreeNodeCollectionContains(bookmarks, item.Title);
+
+          if (index > -1)
           {
-            btnBookmark.Image = bitmaps[1];
-            bookmarks.Add(channel.Title);
-          }
-          else
-          {
-            btnBookmark.Image = bitmaps[2];
-
-            int index = TreeNodeCollectionContains(bookmarks, channel.Title);
-
-            if (index > -1)
-            {
-              bookmarks.RemoveAt(index);
-            }
+            bookmarks.RemoveAt(index);
           }
         }
       }
@@ -503,19 +494,22 @@ namespace WiseRss
 
     private void saveAsToolStripMenuItem_Click(object sender, EventArgs e)
     {
-        try
+      try
+      {
+        if (saveFileDialog1.ShowDialog() == DialogResult.OK)
         {
-            if (saveFileDialog1.ShowDialog() == DialogResult.OK)
-            {
-                rchTxtContent.SaveFile(saveFileDialog1.FileName);
-            }
+          rchTxtContent.SaveFile(saveFileDialog1.FileName);
         }
-        catch (Exception)
-        {
-            
-        }
+      }
+      catch (Exception)
+      {
 
+      }
+    }
 
+    private void exitToolStripMenuItem1_Click(object sender, EventArgs e)
+    {
+      Application.Exit();
     }
   }
 }

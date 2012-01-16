@@ -1215,7 +1215,6 @@ namespace DataAccess
       channel.Title = Convert.ToString(dr["title"]);
       channel.TimeToLive = Convert.ToInt32(dr["ttl"]);
       channel.WebMaster = Convert.ToString(dr["webmaster"]);
-      channel.Favorite = Convert.ToBoolean(dr["favorite"]);
       channel.Status = RssStatus.Unchanged;
 
       RssItemCollection items = GetRssChannelItems(channel.ID);
@@ -1451,7 +1450,6 @@ namespace DataAccess
           parameters.Add(new Tuple<string, MySqlDbType, object, int>("p_title", MySqlDbType.Text, channel.Title, 0));
           parameters.Add(new Tuple<string, MySqlDbType, object, int>("p_ttl", MySqlDbType.UInt32, channel.TimeToLive, 0));
           parameters.Add(new Tuple<string, MySqlDbType, object, int>("p_webmaster", MySqlDbType.Text, channel.WebMaster, 0));
-          parameters.Add(new Tuple<string, MySqlDbType, object, int>("p_favorite", MySqlDbType.Bit, channel.Favorite ? 1 : 0, 0));
           parameters.Add(new Tuple<string, MySqlDbType, object, int>("p_id", MySqlDbType.UInt32, 0, 0));
 
           command.CommandType = System.Data.CommandType.StoredProcedure;
@@ -1550,7 +1548,7 @@ namespace DataAccess
           parameters.Add(new Tuple<string, MySqlDbType, object, int>("p_generator", MySqlDbType.VarChar, channel.Generator, 255));
           parameters.Add(new Tuple<string, MySqlDbType, object, int>("p_language_id", MySqlDbType.UInt32, channel.LanguageID, 0));
           parameters.Add(new Tuple<string, MySqlDbType, object, int>("p_last_build_date", MySqlDbType.DateTime, channel.LastBuildDate, 0));
-          parameters.Add(new Tuple<string, MySqlDbType, object, int>("p_link", MySqlDbType.Text, channel.Link, 0));
+          parameters.Add(new Tuple<string, MySqlDbType, object, int>("p_link", MySqlDbType.Text, channel.Link.OriginalString, 0));
           parameters.Add(new Tuple<string, MySqlDbType, object, int>("p_managing_editor", MySqlDbType.Text, channel.ManagingEditor, 0));
           parameters.Add(new Tuple<string, MySqlDbType, object, int>("p_publication_date", MySqlDbType.DateTime, channel.PubDate, 0));
           parameters.Add(new Tuple<string, MySqlDbType, object, int>("p_rating", MySqlDbType.VarChar, channel.Rating, 255));
@@ -1560,7 +1558,6 @@ namespace DataAccess
           parameters.Add(new Tuple<string, MySqlDbType, object, int>("p_title", MySqlDbType.Text, channel.Title, 0));
           parameters.Add(new Tuple<string, MySqlDbType, object, int>("p_ttl", MySqlDbType.UInt32, channel.TimeToLive, 0));
           parameters.Add(new Tuple<string, MySqlDbType, object, int>("p_webmaster", MySqlDbType.Text, channel.WebMaster, 0));
-          parameters.Add(new Tuple<string, MySqlDbType, object, int>("p_favorite", MySqlDbType.Bit, channel.Favorite ? 1 : 0, 0));
 
           command.CommandType = System.Data.CommandType.StoredProcedure;
 
@@ -1889,6 +1886,7 @@ namespace DataAccess
         item.Source.Url = new Uri(Convert.ToString(dr["source"]));
         item.PubDate = Convert.ToDateTime(dr["publication_date"]);
         item.Title = Convert.ToString(dr["title"]);
+        item.Favorite = Convert.ToBoolean(dr["favorite"]);
         item.Status = RssStatus.Unchanged;
       }
       catch (Exception ex)
@@ -2069,6 +2067,7 @@ namespace DataAccess
           parameters.Add(new Tuple<string, MySqlDbType, object, int>("p_source",           MySqlDbType.Text,       item.Source.Url,  0));
           parameters.Add(new Tuple<string, MySqlDbType, object, int>("p_publication_date", MySqlDbType.DateTime,   item.PubDate,     0));
           parameters.Add(new Tuple<string, MySqlDbType, object, int>("p_title",            MySqlDbType.Text,       item.Title,       0));
+          parameters.Add(new Tuple<string, MySqlDbType, object, int>("p_favorite",         MySqlDbType.Bit,        item.Favorite ? 1 : 0, 0));
           parameters.Add(new Tuple<string, MySqlDbType, object, int>("p_id",               MySqlDbType.UInt64,     0,                0));
           
           command.CommandType = System.Data.CommandType.StoredProcedure;
@@ -2133,6 +2132,7 @@ namespace DataAccess
           parameters.Add(new Tuple<string, MySqlDbType, object, int>("p_source", MySqlDbType.Text, item.Source.Url, 0));
           parameters.Add(new Tuple<string, MySqlDbType, object, int>("p_publication_date", MySqlDbType.DateTime, item.PubDate, 0));
           parameters.Add(new Tuple<string, MySqlDbType, object, int>("p_title", MySqlDbType.Text, item.Title, 0));
+          parameters.Add(new Tuple<string, MySqlDbType, object, int>("p_favorite", MySqlDbType.Bit, item.Favorite ? 1 : 0, 0));
 
           command.CommandType = System.Data.CommandType.StoredProcedure;
 

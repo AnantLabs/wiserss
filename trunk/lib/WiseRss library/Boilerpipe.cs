@@ -44,13 +44,19 @@ namespace Rss
     public static string Oneliner(string p_url)
     {
       java.net.URL url = new java.net.URL(p_url);
+      string text = string.Empty;
 
-      // This can also be done in one line:
-      return ArticleExtractor.INSTANCE.getText(url);
-
+      try
+      {
+        // This can also be done in one line:
+        text = ArticleExtractor.INSTANCE.getText(url);
+      }
+      catch (System.Exception) { }
       // Also try other extractors!
       //Console.WriteLine(DefaultExtractor.INSTANCE.getText(url));
       //Console.WriteLine(CommonExtractors.CANOLA_EXTRACTOR.getText(url));
+
+      return text;
     }
 
     [Obsolete]

@@ -57,7 +57,6 @@ namespace Rss
     private Day skipDays = new Day();
     private string rating = RssDefault.String;
     private RssItemCollection items = new RssItemCollection();
-    private bool favorite = RssDefault.Bool;
     private RssStatus status = RssStatus.Unchanged;
 
     /// <summary>Initialize a new instance of the RssChannel class</summary>
@@ -234,20 +233,20 @@ namespace Rss
     {
       get { return items; }
     }
-    /// <summary>Indicate if channel is marked as favorite (true=favorite)</summary>
-    public bool Favorite
-    {
-      get { return favorite; }
-      set { favorite = RssDefault.Check(value); Status = RssStatus.Changed; }
-    }
-
+    
     /// <summary>
     /// Indicate if channel is modified
     /// </summary>
     public RssStatus Status
     {
       get { return status; }
-      set { status = value; }
+      set
+      {
+        if (status != RssStatus.Update)
+        {
+          status = value;
+        }
+      }
     }
 
     /// <summary>
