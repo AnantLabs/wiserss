@@ -201,6 +201,8 @@
     <Compile Include="Hour.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Image.cs" />
+    <Compile Include="ImageExtractor.cs" />
     <Compile Include="Rss20Writer.cs">
       <SubType>Code</SubType>
     </Compile>

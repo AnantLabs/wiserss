@@ -59,33 +59,31 @@ namespace Rss
       return text;
     }
 
-    [Obsolete]
-    private static void ImageExtractor(string p_url)
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="p_url"></param>
+    public static void ImageExtractor(string p_url)
     {
-      // TODO: implement ImageExtractor class
-      // http://code.google.com/p/boilerpipe/source/browse/trunk/boilerpipe-core/src/demo/de/l3s/boilerpipe/demo/ImageExtractorDemo.java
-
-      /*
-      java.net.URL url = new java.net.URL("http://www.spiegel.de/wissenschaft/natur/0,1518,789176,00.html");
+      java.net.URL url = new java.net.URL(p_url);
       
       // choose from a set of useful BoilerpipeExtractors...
       BoilerpipeExtractor extractor = CommonExtractors.ARTICLE_EXTRACTOR;
-      //              final BoilerpipeExtractor extractor = CommonExtractors.DEFAULT_EXTRACTOR;
-      //              final BoilerpipeExtractor extractor = CommonExtractors.CANOLA_EXTRACTOR;
-      //              final BoilerpipeExtractor extractor = CommonExtractors.LARGEST_CONTENT_EXTRACTOR;
+      //BoilerpipeExtractor extractor = CommonExtractors.DEFAULT_EXTRACTOR;
+      //BoilerpipeExtractor extractor = CommonExtractors.CANOLA_EXTRACTOR;
+      //BoilerpipeExtractor extractor = CommonExtractors.LARGEST_CONTENT_EXTRACTOR;
       
-      ImageExtractor ie = ImageExtractor.INSTANCE;
+      ImageExtractor ie = Rss.ImageExtractor.INSTANCE;
 
-      List<Image> imgUrls = ie.process(url, extractor);
+      List<string> imgUrls = ie.getEnclosedImages(url, extractor); // ie.process(url, extractor);
 
       // automatically sorts them by decreasing area, i.e. most probable true positives come first
-      java.util.Collections.sort(imgUrls);
+      //java.util.Collections.sort(imgUrls);
 
-      foreach (Image img in imgUrls)
+      foreach (string img in imgUrls)
       {
         Console.WriteLine("* " + img);
       }
-      */
     }
 
     private static void HTMLHighlight(string p_url)

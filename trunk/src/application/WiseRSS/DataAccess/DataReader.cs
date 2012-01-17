@@ -982,18 +982,7 @@ namespace DataAccess
         enclosure.Url = new Uri(Convert.ToString(dr["url"]));
         enclosure.File = new System.IO.MemoryStream((byte[])dr["file"]);
         enclosure.RssItemID = Convert.ToInt64(dr["rss_item_id"]);
-
-        using (System.IO.MemoryStream ms = new System.IO.MemoryStream((byte[])dr["file"]))
-        {
-          System.Runtime.Serialization.Formatters.Binary.BinaryFormatter oBFormatter =
-            new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
-
-          if (enclosure.Type.Contains("jpeg"))
-          {
-            System.Drawing.Image img = (System.Drawing.Image)oBFormatter.Deserialize(ms);
-            img.Save(enclosure.Url + ".jpeg", System.Drawing.Imaging.ImageFormat.Jpeg);
-          }
-        }
+        // TODO: read file from disk
       }
       catch (Exception ex)
       {
@@ -1085,7 +1074,7 @@ namespace DataAccess
           parameters.Add(new Tuple<string, MySqlDbType, object, int>("p_length",      MySqlDbType.UInt32,  enclosure.Length,             0));
           parameters.Add(new Tuple<string, MySqlDbType, object, int>("p_type",        MySqlDbType.VarChar, enclosure.Type,               255));
           parameters.Add(new Tuple<string, MySqlDbType, object, int>("p_url",         MySqlDbType.Text,    enclosure.Url.OriginalString, 0));
-          //parameters.Add(new Tuple<string, MySqlDbType, object, int>("p_file",        MySqlDbType.Blob,    enclosure.File.ToArray(),     0));
+          parameters.Add(new Tuple<string, MySqlDbType, object, int>("p_file",        MySqlDbType.Text,    enclosure.Path,               0));
           parameters.Add(new Tuple<string, MySqlDbType, object, int>("p_id",          MySqlDbType.UInt32,  enclosure.ID,                 0));
 
           cmd.CommandType = System.Data.CommandType.StoredProcedure;
@@ -1135,7 +1124,7 @@ namespace DataAccess
           parameters.Add(new Tuple<string, MySqlDbType, object, int>("p_length",      MySqlDbType.UInt32,  enclosure.Length,    0));
           parameters.Add(new Tuple<string, MySqlDbType, object, int>("p_type",        MySqlDbType.VarChar, enclosure.Type,      255));
           parameters.Add(new Tuple<string, MySqlDbType, object, int>("p_url",         MySqlDbType.Text,    enclosure.Url,       0));
-          //parameters.Add(new Tuple<string, MySqlDbType, object, int>("p_file",        MySqlDbType.Blob,    enclosure.File.ToArray(),      0));
+          parameters.Add(new Tuple<string, MySqlDbType, object, int>("p_file",        MySqlDbType.Text,    enclosure.Path,      0));
 
           cmd.CommandType = System.Data.CommandType.StoredProcedure;
 
@@ -1802,7 +1791,7 @@ namespace DataAccess
           parameters.Add(new Tuple<string, MySqlDbType, object, int>("p_url", MySqlDbType.Text, image.Url.OriginalString, 0));
           parameters.Add(new Tuple<string, MySqlDbType, object, int>("p_title", MySqlDbType.VarChar, image.Title, 255));
           parameters.Add(new Tuple<string, MySqlDbType, object, int>("p_link", MySqlDbType.Text, image.Link.OriginalString, 0));
-          parameters.Add(new Tuple<string, MySqlDbType, object, int>("p_image_path", MySqlDbType.Blob, image.Path, 0));
+          parameters.Add(new Tuple<string, MySqlDbType, object, int>("p_image_path", MySqlDbType.Text, image.Path, 0));
 
           cmd.CommandType = System.Data.CommandType.StoredProcedure;
 
@@ -2067,7 +2056,7 @@ namespace DataAccess
           parameters.Add(new Tuple<string, MySqlDbType, object, int>("p_source",           MySqlDbType.Text,       item.Source.Url,  0));
           parameters.Add(new Tuple<string, MySqlDbType, object, int>("p_publication_date", MySqlDbType.DateTime,   item.PubDate,     0));
           parameters.Add(new Tuple<string, MySqlDbType, object, int>("p_title",            MySqlDbType.Text,       item.Title,       0));
-          parameters.Add(new Tuple<string, MySqlDbType, object, int>("p_favorite",         MySqlDbType.Bit,        item.Favorite ? 1 : 0, 0));
+          parameters.Add(new Tuple<string, MySqlDbType, object, int>("p_favorite",         MySqlDbType.Byte,       item.Favorite ? 1:0, 1));
           parameters.Add(new Tuple<string, MySqlDbType, object, int>("p_id",               MySqlDbType.UInt64,     0,                0));
           
           command.CommandType = System.Data.CommandType.StoredProcedure;
@@ -2132,7 +2121,7 @@ namespace DataAccess
           parameters.Add(new Tuple<string, MySqlDbType, object, int>("p_source", MySqlDbType.Text, item.Source.Url, 0));
           parameters.Add(new Tuple<string, MySqlDbType, object, int>("p_publication_date", MySqlDbType.DateTime, item.PubDate, 0));
           parameters.Add(new Tuple<string, MySqlDbType, object, int>("p_title", MySqlDbType.Text, item.Title, 0));
-          parameters.Add(new Tuple<string, MySqlDbType, object, int>("p_favorite", MySqlDbType.Bit, item.Favorite ? 1 : 0, 0));
+          parameters.Add(new Tuple<string, MySqlDbType, object, int>("p_favorite", MySqlDbType.Byte, item.Favorite ? 1 : 0, 1));
 
           command.CommandType = System.Data.CommandType.StoredProcedure;
 

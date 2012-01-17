@@ -262,9 +262,9 @@ namespace Translator
         using (System.IO.Stream stream = response.GetResponseStream())
         {
           string[] glnArray = (string[])dcs.ReadObject(stream);
-          sbLanguages.Append(string.Join(",", glnArray.Select(x => x.ToString()).ToArray()));
+          sbLanguages.Append(string.Join(",", glnArray.Select(x => x.Trim().ToString()).ToArray()));
 
-#if DEBUG
+#if false
           new Util.Debug("The language names are: '" + sbLanguages + "'.").Print();
 #endif
         }
@@ -326,9 +326,18 @@ namespace Translator
 
           foreach (string language in results)
           {
-            sbLanguages.Append(language + " ");
+            if (language.Trim().Length > 0)
+            {
+              sbLanguages.Append(language.Trim() + ",");
+            }
           }
-#if DEBUG
+
+          if (sbLanguages.Length > 1)
+          {
+            sbLanguages.Remove(sbLanguages.Length - 1, 1);
+          }
+
+#if false
           new Util.Debug("Languages for Translate: " + sbLanguages).Print();
 #endif
         }
@@ -874,7 +883,7 @@ Translated: {2} Rating: {3} Count: {4}",
         using (System.IO.Stream stream = response.GetResponseStream())
         {
           System.IO.StreamReader rdr = new System.IO.StreamReader(
-            stream, System.Text.Encoding.ASCII);
+            stream, System.Text.Encoding.UTF8);
           string strResponse = rdr.ReadToEnd();
 
           ArrayOfGetTranslationsResponse getTranslationsResponseArray =
@@ -884,7 +893,7 @@ Translated: {2} Rating: {3} Count: {4}",
           foreach (GetTranslationsResponse res in
             getTranslationsResponseArray.GetTranslationsResponse)
           {
-#if DEBUG
+#if false
             new Util.Debug(string.Format(
               "Source Language: {0} State: {1}\n",
               res.From,
@@ -901,9 +910,9 @@ Translated: {2} Rating: {3} Count: {4}",
               }
               else
               {
-                translatedText.Append(match.TranslatedText);
+                translatedText.Append(match.TranslatedText + ".");
 
-#if DEBUG
+#if false
                 new Util.Debug(string.Format(
                   @"Source: {0} Match Degree: {1}
 Translated: {2} Rating: {3} Count: {4}",

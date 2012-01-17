@@ -34,6 +34,11 @@ namespace WiseRss
       }
     };
 
+    private string microsoftTranslateAPIKeyFile = "MicrosoftTranslateAPIKey.ini";
+    private string microsoftTranslateAPIKey = string.Empty;
+    private Dictionary<string, string> microsoftTranslatorLangueges = new Dictionary<string, string>();
+    private bool isGoogleTranslator = true;
+
     private RssObject wRssObject = new RssObject();
     private List<string> lstNewFeeds = new List<string>();
     private DataFormats.Format bmpFormat = DataFormats.GetFormat(DataFormats.Bitmap);
@@ -42,7 +47,9 @@ namespace WiseRss
       Properties.Resources.bookmarks_icon,
       Properties.Resources.disable_bookmarks_icon,
       Properties.Resources.facebook_icon,
-      Properties.Resources.twitter_icon
+      Properties.Resources.twitter_icon,
+      Properties.Resources.tag_icon,
+      Properties.Resources.rss_icon
     };
 
     private frmEmail frmMail = new frmEmail();
@@ -53,9 +60,11 @@ namespace WiseRss
     {
       InitializeComponent();
       LoadTreeView();
-
+      ReadMicrosoftTranslateAPIKey();
       // The Top Posts widgets and the PostRank APIs is disabled.
       // More http://blog.postrank.com/2012/01/the-top-posts-widget-and-google-reader-extension-to-be-retired-on-april-1st/
+
+      //Boilerpipe.ImageExtractor("http://edition.cnn.com/2012/01/16/world/europe/italy-cruise-main/index.html?eref=edition");
     }
 
     public RssObject WRssObject
@@ -95,7 +104,7 @@ namespace WiseRss
 
       ImageList imgList = new ImageList();
 
-      Bitmap bmp = new Bitmap(Properties.Resources.rss_icon);
+      Bitmap bmp = bitmaps[6];
 
       using (Graphics g = Graphics.FromImage(bmp))
       {
@@ -104,12 +113,8 @@ namespace WiseRss
       }
 
       imgList.Images.Add(bmp);
-
-      bmp = new Bitmap(Properties.Resources.tag_icon);
-      imgList.Images.Add(bmp);
-
-      bmp = new Bitmap(Properties.Resources.bookmarks_icon);
-      imgList.Images.Add(bmp);
+      imgList.Images.Add(bitmaps[5]);
+      imgList.Images.Add(bitmaps[1]);
 
       treeView1.ImageList = imgList;
       nodes = treeView1.Nodes["NodeSubscriptions"].Nodes;
@@ -117,48 +122,32 @@ namespace WiseRss
 
       Parallel.ForEach(WRssObject.Channels, channel =>
       {
-        node = new TreeNode(channel.Title.Substring(0,
-          System.Math.Min(channel.Title.Length, 99)));
-
-        node.ToolTipText = channel.Description.Substring(0,
-          System.Math.Min(channel.Description.Length, 99));
+        node = new TreeNode(channel.ShortTitle);
+        node.ToolTipText = channel.ShortDescription;
+        node.Tag = channel.Link.OriginalString;
+        nodes.Add(node);
 
         TreeNode childNode = null;
 
         foreach (RssItem item in channel.Items)
         {
-          childNode = new TreeNode(item.Title.Substring(0,
-          System.Math.Min(item.Title.Length, 99)));
-
-          childNode.ToolTipText = item.Description.Substring(0,
-            System.Math.Min(item.Description.Length, 99)) + "...";
+          childNode = new TreeNode(item.ShortTitle);
+          childNode.ToolTipText = item.ShortDescription;
+          childNode.Tag = item.Link.OriginalString;
           node.Nodes.Add(childNode);
 
-          // TODO: if not added
           if (item.Favorite)
           {
-            bookmarks.Add(node.Text);
+            bookmarks.Add(childNode.Clone() as TreeNode);
           }
         }
-
-        nodes.Add(node);
       });
     }
 
     private void Form1_FormClosing(object sender, FormClosingEventArgs e)
     {
       ListNewFeeds.Clear();
-    }
-
-    private void LoadRichTextBoxIcons()
-    {
-      foreach (Bitmap bmp in bitmaps)
-      {
-        this.Invoke((MethodInvoker)delegate()
-        {
-          PasteBitmap(bmp);
-        });
-      }
+      WRssObject.SaveChanges();
     }
 
     private void PasteBitmap(Bitmap image)
@@ -191,14 +180,11 @@ namespace WiseRss
           return;
         }
 
-        if (feed == null)
-        {
-          return;
-        }
+        if (feed == null) { return; }
 
         foreach (RssChannel channel in feed.Channels)
         {
-          byte[] channelPlainTextBytes = Encoding.UTF8.GetBytes(channel.Link.OriginalString);
+          byte[] channelPlainTextBytes = Encoding.UTF8.GetBytes(channel.OriginalLink);
           string channelPath = System.IO.Path.GetDirectoryName(Application.ExecutablePath) +
             "\\img\\" +
             Util.String.WindowsPath(Convert.ToBase64String(channelPlainTextBytes));
@@ -217,18 +203,17 @@ namespace WiseRss
 
           foreach (RssCategory category in channel.Categories)
           {
-            if (-1 == TreeNodeCollectionContains(nodeCategories, category.Name))
+            TreeNode categoryNode = new TreeNode(category.Name);
+
+            if (WRssObject.AddCategoryNode(categoryNode))
             {
-              if (!nodeCategories.ContainsKey(category.Name))
-              {
-                this.Invoke((MethodInvoker)delegate() { nodeCategories.Add(category.Name); });
-              }
+              this.Invoke((MethodInvoker)delegate() { nodeCategories.Add(categoryNode); });
             }
           }
 
           TreeNode node = null;
           bool newFeed = false;
-          int index = TreeNodeCollectionContains(nodeFeed, channel.Title);
+          int index = TreeNodeCollectionContains(nodeFeed, channel.Link.OriginalString);
 
           if (index > -1)
           {
@@ -237,34 +222,46 @@ namespace WiseRss
           else
           {
             newFeed = true;
-            node = new TreeNode(channel.Title.Substring(0,
-              System.Math.Min(channel.Title.Length, 99)));
-
-            node.ToolTipText = channel.Description.Substring(0,
-              System.Math.Min(channel.Description.Length, 99));
+            node = new TreeNode();
+            node.Tag = channel.Link.OriginalString;
           }
+
+          Invoke((MethodInvoker)delegate()
+          {
+            node.Text = channel.ShortTitle;
+            node.ToolTipText = channel.ShortDescription;
+          });
 
           TreeNode childNode = null;
 
           foreach (RssItem item in channel.Items)
           {
-            index = TreeNodeCollectionContains(node.Nodes, item.Title);
+            index = TreeNodeCollectionContains(node.Nodes, item.Link.OriginalString);
 
             if (index > -1)
             {
               childNode = node.Nodes[index];
-              childNode.ToolTipText = item.Description.Substring(0,
-                System.Math.Min(item.Description.Length, 99));
             }
             else
             {
-              childNode = new TreeNode(item.Title.Substring(0,
-                System.Math.Min(item.Title.Length, 99)));
-              childNode.ToolTipText = item.Description.Substring(0,
-                System.Math.Min(item.Description.Length, 99));
-
-              this.Invoke((MethodInvoker)delegate() { node.Nodes.Add(childNode); });
+              childNode = new TreeNode();
+              childNode.Tag = item.Link.OriginalString;
             }
+
+            Invoke((MethodInvoker)delegate()
+            {
+              childNode.Text = item.ShortTitle;
+              childNode.ToolTipText = item.ShortDescription;
+            });
+
+            if (index == -1)
+            {
+              this.Invoke((MethodInvoker)delegate()
+              {
+                node.Nodes.Add(childNode);
+              });
+            }
+
             item.Status = RssStatus.Update;
           }
           channel.Status = RssStatus.Update;
@@ -282,12 +279,12 @@ namespace WiseRss
       lstNewFeeds.Clear();
     }
 
-    private int TreeNodeCollectionContains(TreeNodeCollection collection, string name)
+    private int TreeNodeCollectionContains(TreeNodeCollection collection, string url)
     {
       int i = 0;
       foreach (TreeNode node in collection)
       {
-        if (name.Equals(node.Text))
+        if (url.Equals(node.Tag))
         {
           return i;
         }
@@ -318,10 +315,10 @@ namespace WiseRss
     private void treeView1_AfterSelect(object sender, TreeViewEventArgs e)
     {
       TreeNode node = e.Node;
-      if (node == null) { return; }
+      if (node == null) { btnBookmark.Image = bitmaps[2]; return; }
 
       TreeNode parent = node.Parent;
-      if (parent == null) { return; }
+      if (parent == null) { btnBookmark.Image = bitmaps[2]; return; }
 
       TreeNode parentParent = node.Parent.Parent;
 
@@ -331,43 +328,50 @@ namespace WiseRss
 
       // Node Subscriptions
       if (parent.Text.Equals(treeView1.Nodes[0].Text) ||
-          (parentParent != null && parentParent.Text.Equals(treeView1.Nodes[0].Text)))
+         (parentParent != null && parentParent.Text.Equals(treeView1.Nodes[0].Text)))
       {
         if (parentParent == null)
         {
-          channel = WRssObject.GetChannel(node.Text);
+          channel = WRssObject.GetChannel(node.Tag.ToString());
           btnBookmark.Image = bitmaps[2];
         }
         else
         {
-          channel = WRssObject.GetChannel(parent.Text);
-          item = WRssObject.GetItem(parent.Text + node.Text);
+          channel = WRssObject.GetChannel(parent.Tag.ToString());
+          item = WRssObject.GetItem(node.Tag.ToString());
           btnBookmark.Image = item.Favorite ? bitmaps[1] : bitmaps[2];
         }
       }
-
       // Node Bookmarks
-      if (parent.Text.Equals(treeView1.Nodes[2].Text))
+      else if (parent.Text.Equals(treeView1.Nodes[2].Text))
       {
-        //channel = WRssObject.GetChannel(parent.Text);
-        item = WRssObject.GetBookmark(node.Text);
+        item = WRssObject.GetItem(node.Tag.ToString());
+        btnBookmark.Image = item.Favorite ? bitmaps[1] : bitmaps[2];
+      }
+      else
+      {
+        btnBookmark.Image = bitmaps[2];
       }
 
-      if (channel == null) { return; }
-
-      rchTxtContent.AppendText(channel.Title);
-      rchTxtContent.AppendText(System.Environment.NewLine);
-      rchTxtContent.AppendText(channel.LastBuildDate.ToString());
-      rchTxtContent.AppendText(System.Environment.NewLine);
+      if (channel != null)
+      {
+        rchTxtContent.AppendText(channel.Title);
+        rchTxtContent.AppendText(System.Environment.NewLine);
+        rchTxtContent.AppendText(channel.LastBuildDate.ToString());
+        rchTxtContent.AppendText(System.Environment.NewLine);
+      }
 
       if (item != null)
       {
         rchTxtContent.AppendText(item.Description);
         selItem = item;
       }
-      else
+
+      if (item == null && channel != null)
       {
-        if (channel.Image.Image != null && channel.Image.Image.Length > 0)
+        if (channel.Image != null &&
+            channel.Image.Image != null &&
+            channel.Image.Image.Length > 0)
         {
           PasteBitmap(new Bitmap(channel.Image.Image));
         }
@@ -453,43 +457,128 @@ namespace WiseRss
     {
       if (treeView1.SelectedNode != null &&
           treeView1.SelectedNode.Parent != null &&
-          treeView1.SelectedNode.Parent.Parent != null &&
-          treeView1.SelectedNode.Parent.Parent.Text.Equals("Subscriptions"))
+          ((treeView1.SelectedNode.Parent.Parent != null &&
+            treeView1.SelectedNode.Parent.Parent.Text.Equals("Subscriptions")) ||
+           (treeView1.SelectedNode.Parent.Text.Equals("Bookmarks"))))
       {
-        RssItem item = WRssObject.GetItem(treeView1.SelectedNode.Parent.Text + treeView1.SelectedNode.Text);
-
-        Debug.Assert(item != null);
+        RssItem item = WRssObject.GetItem(treeView1.SelectedNode.Tag.ToString());
 
         item.Favorite = !item.Favorite;
         TreeNodeCollection bookmarks = treeView1.Nodes["NodeBookmarks"].Nodes;
 
         if (item.Favorite)
         {
+          TreeNode node = new TreeNode(item.ShortTitle);
+          node.ToolTipText = item.ShortDescription;
+          node.Tag = item.Link.OriginalString;
           btnBookmark.Image = bitmaps[1];
-          bookmarks.Add(item.Title);
+          bookmarks.Add(node);
         }
         else
         {
           btnBookmark.Image = bitmaps[2];
-
-          int index = TreeNodeCollectionContains(bookmarks, item.Title);
-
-          if (index > -1)
-          {
-            bookmarks.RemoveAt(index);
-          }
+          int index = TreeNodeCollectionContains(bookmarks, item.Link.OriginalString);
+          bookmarks.RemoveAt(index);
         }
       }
     }
       
     private void btnTag_Click(object sender, EventArgs e)
     {
-        new RssObject().InsertNewItems();
+      
     }
 
     private void btnTranslate_Click(object sender, EventArgs e)
     {
+      if (cbxTranslate.SelectedItem != null &&
+          !microsoftTranslateAPIKey.Equals(string.Empty) &&
+          selItem != null)
+      {
+        string translatedText = string.Empty;
 
+        MethodInvoker translateTextDelegate = new MethodInvoker(delegate()
+          {
+            Invoke((MethodInvoker)delegate()
+            {
+              if (!isGoogleTranslator)
+              {
+                translatedText = Translator.Microsoft.GetTranslationsArray(
+                  microsoftTranslateAPIKey,
+                  selItem.Description.Split('.'),
+                  string.Empty,
+                  microsoftTranslatorLangueges[cbxTranslate.SelectedItem.ToString()],
+                  1);
+              }
+              else
+              {
+                translatedText = Translator.Google.TranslateText(
+                  selItem.Description,
+                  microsoftTranslatorLangueges[cbxTranslate.SelectedItem.ToString()]);
+              }
+            });
+          });
+
+        translateTextDelegate.BeginInvoke(new AsyncCallback(delegate(IAsyncResult ar)
+        {
+          translateTextDelegate.EndInvoke(ar);
+
+          if (!translatedText.Equals(string.Empty))
+          {
+            Invoke((MethodInvoker)delegate()
+            {
+              rchTxtContent.Clear();
+              rchTxtContent.AppendText(translatedText);
+            });
+          }
+        }),
+          null);
+      }
+    }
+
+    private void ReadMicrosoftTranslateAPIKey()
+    {
+      string file = Application.ExecutablePath.Substring(0,
+        Application.ExecutablePath.LastIndexOf('\\') + 1) +
+        microsoftTranslateAPIKeyFile;
+
+      if (File.Exists(file))
+      {
+        MethodInvoker readFileDelegate = new MethodInvoker(delegate()
+        {
+          try
+          {
+            microsoftTranslateAPIKey = File.ReadAllText(file);
+            string[] languageCodes = Translator.Microsoft.GetLanguagesForTranslate(
+              microsoftTranslateAPIKey).Split(',');
+
+            string[] languageNames = Translator.Microsoft.GetLanguageNames(
+              microsoftTranslateAPIKey, "en", languageCodes).Split(',');
+
+            if (languageCodes.Length == languageNames.Length)
+            {
+              for (int i = 0; i < languageNames.Length; ++i)
+              {
+                if (!microsoftTranslatorLangueges.ContainsKey(languageNames[i]))
+                {
+                  microsoftTranslatorLangueges.Add(languageNames[i], languageCodes[i]);
+                }
+              }
+
+              cbxTranslate.Invoke((MethodInvoker)delegate()
+              {
+                cbxTranslate.Items.AddRange(languageNames);
+              });
+            }
+          }
+          catch { }
+        });
+
+        readFileDelegate.BeginInvoke(new AsyncCallback(delegate(IAsyncResult ar)
+        {
+          readFileDelegate.EndInvoke(ar);
+        }),
+          null);
+      }
     }
 
     private void saveAsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -501,15 +590,66 @@ namespace WiseRss
           rchTxtContent.SaveFile(saveFileDialog1.FileName);
         }
       }
-      catch (Exception)
-      {
-
-      }
+      catch (Exception) { }
     }
 
     private void exitToolStripMenuItem1_Click(object sender, EventArgs e)
     {
       Application.Exit();
+    }
+
+    private void treeVewToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+      treeView1.Visible = !treeView1.Visible;
+      treeVewToolStripMenuItem.CheckState = treeView1.Visible ?
+                                            System.Windows.Forms.CheckState.Checked :
+                                            System.Windows.Forms.CheckState.Unchecked;
+      splitContainer1.Panel1Collapsed = !splitContainer1.Panel1Collapsed;
+    }
+
+    private void googleTranslatorToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+      if (!isGoogleTranslator)
+      {
+        isGoogleTranslator = true;
+        googleTranslatorToolStripMenuItem.Checked = true;
+        microsoftTranslatorToolStripMenuItem.Checked = false;
+      }
+    }
+
+    private void microsoftTranslatorToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+      if (isGoogleTranslator)
+      {
+        isGoogleTranslator = false;
+        googleTranslatorToolStripMenuItem.Checked = false;
+        microsoftTranslatorToolStripMenuItem.Checked = true;
+      }
+    }
+
+    private void copyToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+      rchTxtContent.Copy();
+    }
+
+    private void cutToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+      rchTxtContent.Cut();
+    }
+
+    private void pasteToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+      rchTxtContent.Paste();
+    }
+
+    private void deleteToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+      rchTxtContent.SelectedText = string.Empty;
+    }
+
+    private void selectAllToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+      rchTxtContent.SelectAll();
     }
   }
 }

@@ -41,6 +41,7 @@ namespace Rss
     private int length = RssDefault.Int;
     private string type = RssDefault.String;
     private System.IO.MemoryStream file = null;
+    private string path = RssDefault.String;
 
     /// <summary>Initialize a new instance of the RssEnclosure class.</summary>
     public RssEnclosure() { }
@@ -119,6 +120,15 @@ namespace Rss
     {
       get { return file; }
       set { file = value; }
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public string Path
+    {
+      get { return path; }
+      set { path = RssDefault.Check(value); }
     }
   }
 }

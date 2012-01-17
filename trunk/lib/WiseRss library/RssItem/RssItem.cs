@@ -59,6 +59,8 @@ namespace Rss
     private bool favorite = RssDefault.Bool;
     private RssStatus status = RssStatus.Unchanged;
     private bool canSave = RssDefault.Bool;
+    private string shortTitle = RssDefault.String;
+    private string shortDescription = RssDefault.String;
 
     /// <summary>
     /// 
@@ -131,8 +133,24 @@ namespace Rss
     public string Title
     {
       get { return title; }
-      set { if (null != value && value.Length > 0) { title = RssDefault.Check(value).Trim(); Status = RssStatus.Changed; } }
+      set
+      {
+        if (null != value && value.Length > 0)
+        {
+          title = RssDefault.Check(value).Trim(); Status = RssStatus.Changed;
+          shortTitle = title.Substring(0, System.Math.Min(title.Length, 128));
+        }
+      }
     }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public string ShortTitle
+    {
+      get { return shortTitle; }
+    }
+
     /// <summary>URL of the item</summary>
     /// <remarks>Maximum length is 500 (For RSS 0.91)</remarks>
     public Uri Link
@@ -183,8 +201,23 @@ namespace Rss
     public string Description
     {
       get { return description; }
-      set { description = RssDefault.Check(value).Trim(); Status = RssStatus.Changed; }
+      set
+      {
+        description = RssDefault.Check(value).Trim();
+        shortDescription = description.Substring(0,
+          System.Math.Min(description.Length, 128)) + "...";
+        Status = RssStatus.Changed;
+      }
     }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public string ShortDescription
+    {
+      get { return shortDescription; }
+    }
+
     /// <summary>Email address of the author of the item</summary>
     public string Author
     {
