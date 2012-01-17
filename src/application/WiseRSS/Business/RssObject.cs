@@ -9,7 +9,7 @@ namespace Business
     private DataReader reader = null;
     private System.Collections.Generic.Dictionary<string, RssChannel> dictChannels = null;
     private System.Collections.Generic.Dictionary<string, RssItem> dictItems = null;
-    private System.Collections.Generic.Dictionary<string, RssItem> dictBookmarks = null;
+    private System.Collections.Generic.Dictionary<string, System.Windows.Forms.TreeNode> dictCategories = null;
     private RssChannelCollection channels = null;
     private RssCategoryCollection categories = null;
     private RssLanguageCollection languages = null;
@@ -19,15 +19,13 @@ namespace Business
     /// </summary>
     public RssObject()
     {
-      
       reader = new DataReader();
       channels = new RssChannelCollection();
-      InsertNewItems();
       categories = reader.GetCategories();
       languages = reader.GetLanguages();
       dictChannels = new System.Collections.Generic.Dictionary<string, RssChannel>();
       dictItems = new System.Collections.Generic.Dictionary<string, RssItem>();
-      dictBookmarks = new System.Collections.Generic.Dictionary<string, RssItem>();
+      dictCategories = new System.Collections.Generic.Dictionary<string, System.Windows.Forms.TreeNode>();
 
       // add references to dictionary
       foreach (RssChannel channel in reader.GetRssChannels())
@@ -46,38 +44,37 @@ namespace Business
       get { return channels; }
     }
 
-    public RssChannel GetChannel(string channelName)
+    public RssChannel GetChannel(string channelUrl)
     {
-      if (dictChannels.ContainsKey(channelName))
+      if (dictChannels.ContainsKey(channelUrl))
       {
-        return dictChannels[channelName];
+        return dictChannels[channelUrl];
       }
       return null;
     }
 
+    public bool AddCategoryNode(System.Windows.Forms.TreeNode node)
+    {
+      if (!dictCategories.ContainsKey(node.Text))
+      {
+        dictCategories.Add(node.Text, node);
+        return true;
+      }
+      return false;
+    }
+
     private bool AddChannel(RssChannel channel)
     {
-      string shortTitle = channel.Title.Substring(0,
-          System.Math.Min(channel.Title.Length, 99));
-
-      if (!dictChannels.ContainsKey(shortTitle))
+      if (!dictChannels.ContainsKey(channel.Link.OriginalString))
       {
-        dictChannels.Add(shortTitle, channel);
+        dictChannels.Add(channel.Link.OriginalString, channel);
         channels.Add(channel);
 
         foreach (RssItem item in channel.Items)
         {
-          string itemName = shortTitle;
-          string itemShortTitle = item.Title.Substring(0, System.Math.Min(item.Title.Length, 99));
-
-          if (!dictItems.ContainsKey(itemName + itemShortTitle))
+          if (!dictItems.ContainsKey(item.Link.OriginalString))
           {
-            dictItems.Add(itemName + itemShortTitle, item);
-          }
-
-          if (!dictBookmarks.ContainsKey(itemShortTitle))
-          {
-            dictBookmarks.Add(itemShortTitle, item);
+            dictItems.Add(item.Link.OriginalString, item);
           }
         }
         return true;
@@ -85,20 +82,20 @@ namespace Business
       return false;
     }
 
-    public RssItem GetItem(string itemName)
+    public System.Windows.Forms.TreeNode GetCategoryNode(string name)
     {
-      if (dictItems.ContainsKey(itemName))
+      if (dictCategories.ContainsKey(name))
       {
-        return dictItems[itemName];
+        return dictCategories[name];
       }
       return null;
     }
 
-    public RssItem GetBookmark(string itemName)
+    public RssItem GetItem(string url)
     {
-      if (dictBookmarks.ContainsKey(itemName))
+      if (dictItems.ContainsKey(url))
       {
-        return dictBookmarks[itemName];
+        return dictItems[url];
       }
       return null;
     }
@@ -148,7 +145,7 @@ namespace Business
       return Reader.GetLanguage(id);
     }
 
-    public RssLanguageCollection GetLanguagess()
+    public RssLanguageCollection GetLanguages()
     {
       return Reader.GetLanguages();
     }
@@ -182,24 +179,23 @@ namespace Business
     //  }
     //}
 
-    //public void InsertNewItems()
-    //{
-    //  foreach (RssChannel channel in Channels)
-    //  {
-    //    if (channel.Status != RssStatus.Unchanged)
-    //    {
-    //      Reader.UpdateRssChannel(channel);
-    //      foreach (RssItem item in channel.Items)
-    //      {
-    //        if (item.Status != RssStatus.Unchanged)
-    //        {
-    //          item.ChannelID = channel.ID;
-    //          Reader.InsertRssItem(item);
-    //        }
-    //      }
-    //    }
-    //  }
-    //}
+    public void SaveChanges()
+    {
+      foreach (RssChannel channel in Channels)
+      {
+        if (channel.Status != RssStatus.Unchanged)
+        {
+          Reader.UpdateRssChannel(channel);
+          foreach (RssItem item in channel.Items)
+          {
+            if (item.Status != RssStatus.Unchanged)
+            {
+              Reader.UpdateRssItem(item);
+            }
+          }
+        }
+      }
+    }
 
     public void InsertNewItems()
     {

@@ -664,7 +664,7 @@ PROCEDURE InsertRssItem(IN p_channel_id INT UNSIGNED,
                         IN p_source TEXT,
                         IN p_publication_date DATETIME,
                         IN p_title TEXT,
-                        IN p_favorite BIT,
+                        IN p_favorite TINYINT(1),
                         OUT p_id BIGINT UNSIGNED)
 BEGIN
 SET p_id = GetRssItemID(p_link);
@@ -711,7 +711,7 @@ PROCEDURE UpdateRssItem(IN p_id BIGINT UNSIGNED,
                         IN p_source TEXT,
                         IN p_publication_date DATETIME,
                         IN p_title TEXT,
-                        IN p_favorite BIT)
+                        IN p_favorite TINYINT(1))
 BEGIN
 IF p_id > 0 THEN
   UPDATE rss_items

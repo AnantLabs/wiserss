@@ -58,6 +58,13 @@ namespace Rss
     private string rating = RssDefault.String;
     private RssItemCollection items = new RssItemCollection();
     private RssStatus status = RssStatus.Unchanged;
+    private string shortTitle = RssDefault.String;
+    private string shortDescription = RssDefault.String;
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public string OriginalLink = string.Empty;
 
     /// <summary>Initialize a new instance of the RssChannel class</summary>
     public RssChannel() { }
@@ -89,8 +96,24 @@ namespace Rss
     public string Title
     {
       get { return title; }
-      set { if (null != value && value.Length > 0) { title = RssDefault.Check(value).Trim(); Status = RssStatus.Changed; } }
+      set
+      {
+        if (null != value && value.Length > 0)
+        {
+          title = RssDefault.Check(value).Trim(); Status = RssStatus.Changed;
+          shortTitle = title.Substring(0, System.Math.Min(title.Length, 128));
+        }
+      }
     }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public string ShortTitle
+    {
+      get { return shortTitle; }
+    }
+
     /// <summary>URL of the website named in the title</summary>
     /// <remarks>Maximum length is 500 characters (For RSS 0.91)</remarks>
     public Uri Link
@@ -103,8 +126,23 @@ namespace Rss
     public string Description
     {
       get { return description; }
-      set { description = RssDefault.Check(value).Trim(); Status = RssStatus.Changed; }
+      set
+      {
+        description = RssDefault.Check(value).Trim();
+        shortDescription = description.Substring(0,
+          System.Math.Min(description.Length, 128)) + "...";
+        Status = RssStatus.Changed;
+      }
     }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public string ShortDescription
+    {
+      get { return shortDescription; }
+    }
+
     /// <summary>
     /// The language ID the channel belongs to.
     /// </summary>

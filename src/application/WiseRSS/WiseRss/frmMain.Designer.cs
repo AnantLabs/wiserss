@@ -28,64 +28,75 @@
     /// </summary>
     private void InitializeComponent()
     {
-        System.Windows.Forms.TreeNode treeNode1 = new System.Windows.Forms.TreeNode("Subscriptions", 0, 0);
-        System.Windows.Forms.TreeNode treeNode2 = new System.Windows.Forms.TreeNode("Tags", 1, 1);
-        System.Windows.Forms.TreeNode treeNode3 = new System.Windows.Forms.TreeNode("Bookmarks", 2, 2);
-        this.menuStrip1 = new System.Windows.Forms.MenuStrip();
-        this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-        this.addToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
-        this.newFeedToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-        this.saveAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-        this.exitToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
-        this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-        this.viewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-        this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-        this.treeView1 = new System.Windows.Forms.TreeView();
-        this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-        this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-        this.rchTxtContent = new System.Windows.Forms.RichTextBox();
-        this.btnTag = new System.Windows.Forms.Button();
-        this.btnBookmark = new System.Windows.Forms.Button();
-        this.btnFacebook = new System.Windows.Forms.Button();
-        this.btnTwitt = new System.Windows.Forms.Button();
-        this.btnMail = new System.Windows.Forms.Button();
-        this.btnTranslate = new System.Windows.Forms.Button();
-        this.cbxTranslate = new System.Windows.Forms.ComboBox();
-        this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-        this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
-        this.menuStrip1.SuspendLayout();
-        ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
-        this.splitContainer1.Panel1.SuspendLayout();
-        this.splitContainer1.Panel2.SuspendLayout();
-        this.splitContainer1.SuspendLayout();
-        this.SuspendLayout();
-        // 
-        // menuStrip1
-        // 
-        this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+      this.components = new System.ComponentModel.Container();
+      System.Windows.Forms.TreeNode treeNode1 = new System.Windows.Forms.TreeNode("Subscriptions", 0, 0);
+      System.Windows.Forms.TreeNode treeNode2 = new System.Windows.Forms.TreeNode("Tags", 1, 1);
+      System.Windows.Forms.TreeNode treeNode3 = new System.Windows.Forms.TreeNode("Bookmarks", 2, 2);
+      this.menuStrip1 = new System.Windows.Forms.MenuStrip();
+      this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.addToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+      this.newFeedToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.saveAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.exitToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+      this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.cutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.copytToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.pasteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.deleteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.selectAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.viewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.treeVewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.treeView1 = new System.Windows.Forms.TreeView();
+      this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.rchTxtContent = new System.Windows.Forms.RichTextBox();
+      this.btnTag = new System.Windows.Forms.Button();
+      this.btnBookmark = new System.Windows.Forms.Button();
+      this.btnFacebook = new System.Windows.Forms.Button();
+      this.btnTwitt = new System.Windows.Forms.Button();
+      this.btnMail = new System.Windows.Forms.Button();
+      this.btnTranslate = new System.Windows.Forms.Button();
+      this.translateContextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
+      this.googleTranslatorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.microsoftTranslatorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.cbxTranslate = new System.Windows.Forms.ComboBox();
+      this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+      this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
+      this.menuStrip1.SuspendLayout();
+      this.translateContextMenuStrip.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
+      this.splitContainer1.Panel1.SuspendLayout();
+      this.splitContainer1.Panel2.SuspendLayout();
+      this.splitContainer1.SuspendLayout();
+      this.SuspendLayout();
+      // 
+      // menuStrip1
+      // 
+      this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
             this.editToolStripMenuItem,
             this.viewToolStripMenuItem,
             this.helpToolStripMenuItem});
-        this.menuStrip1.Location = new System.Drawing.Point(0, 0);
-        this.menuStrip1.Name = "menuStrip1";
-        this.menuStrip1.Size = new System.Drawing.Size(830, 24);
-        this.menuStrip1.TabIndex = 1;
-        this.menuStrip1.Text = "menuStrip1";
-        // 
-        // fileToolStripMenuItem
-        // 
-        this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+      this.menuStrip1.Location = new System.Drawing.Point(0, 0);
+      this.menuStrip1.Name = "menuStrip1";
+      this.menuStrip1.Size = new System.Drawing.Size(830, 24);
+      this.menuStrip1.TabIndex = 1;
+      this.menuStrip1.Text = "menuStrip1";
+      // 
+      // fileToolStripMenuItem
+      // 
+      this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.addToolStripMenuItem1,
             this.saveAsToolStripMenuItem,
             this.exitToolStripMenuItem1});
-        this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
-        this.fileToolStripMenuItem.Size = new System.Drawing.Size(35, 20);
-        this.fileToolStripMenuItem.Text = "&File";
-        // 
-        // addToolStripMenuItem1
-        // 
-        this.addToolStripMenuItem1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+      this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
+      this.fileToolStripMenuItem.Size = new System.Drawing.Size(35, 20);
+      this.fileToolStripMenuItem.Text = "&File";
+      // 
+      // addToolStripMenuItem1
+      // 
+      this.addToolStripMenuItem1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.newFeedToolStripMenuItem});
       this.addToolStripMenuItem1.Name = "addToolStripMenuItem1";
       this.addToolStripMenuItem1.Size = new System.Drawing.Size(162, 22);
@@ -117,15 +128,72 @@
       // 
       // editToolStripMenuItem
       // 
+      this.editToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.cutToolStripMenuItem,
+            this.copytToolStripMenuItem,
+            this.pasteToolStripMenuItem,
+            this.deleteToolStripMenuItem,
+            this.selectAllToolStripMenuItem});
       this.editToolStripMenuItem.Name = "editToolStripMenuItem";
       this.editToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
       this.editToolStripMenuItem.Text = "&Edit";
       // 
+      // cutToolStripMenuItem
+      // 
+      this.cutToolStripMenuItem.Name = "cutToolStripMenuItem";
+      this.cutToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.X)));
+      this.cutToolStripMenuItem.Size = new System.Drawing.Size(167, 22);
+      this.cutToolStripMenuItem.Text = "Cut";
+      this.cutToolStripMenuItem.Click += new System.EventHandler(this.cutToolStripMenuItem_Click);
+      // 
+      // copytToolStripMenuItem
+      // 
+      this.copytToolStripMenuItem.Name = "copytToolStripMenuItem";
+      this.copytToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.C)));
+      this.copytToolStripMenuItem.Size = new System.Drawing.Size(167, 22);
+      this.copytToolStripMenuItem.Text = "Copy";
+      this.copytToolStripMenuItem.Click += new System.EventHandler(this.copyToolStripMenuItem_Click);
+      // 
+      // pasteToolStripMenuItem
+      // 
+      this.pasteToolStripMenuItem.Name = "pasteToolStripMenuItem";
+      this.pasteToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.V)));
+      this.pasteToolStripMenuItem.Size = new System.Drawing.Size(167, 22);
+      this.pasteToolStripMenuItem.Text = "Paste";
+      this.pasteToolStripMenuItem.Click += new System.EventHandler(this.pasteToolStripMenuItem_Click);
+      // 
+      // deleteToolStripMenuItem
+      // 
+      this.deleteToolStripMenuItem.Name = "deleteToolStripMenuItem";
+      this.deleteToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.Delete;
+      this.deleteToolStripMenuItem.Size = new System.Drawing.Size(167, 22);
+      this.deleteToolStripMenuItem.Text = "Delete";
+      this.deleteToolStripMenuItem.Click += new System.EventHandler(this.deleteToolStripMenuItem_Click);
+      // 
+      // selectAllToolStripMenuItem
+      // 
+      this.selectAllToolStripMenuItem.Name = "selectAllToolStripMenuItem";
+      this.selectAllToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.A)));
+      this.selectAllToolStripMenuItem.Size = new System.Drawing.Size(167, 22);
+      this.selectAllToolStripMenuItem.Text = "Select All";
+      this.selectAllToolStripMenuItem.Click += new System.EventHandler(this.selectAllToolStripMenuItem_Click);
+      // 
       // viewToolStripMenuItem
       // 
+      this.viewToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.treeVewToolStripMenuItem});
       this.viewToolStripMenuItem.Name = "viewToolStripMenuItem";
       this.viewToolStripMenuItem.Size = new System.Drawing.Size(41, 20);
       this.viewToolStripMenuItem.Text = "&View";
+      // 
+      // treeVewToolStripMenuItem
+      // 
+      this.treeVewToolStripMenuItem.Checked = true;
+      this.treeVewToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
+      this.treeVewToolStripMenuItem.Name = "treeVewToolStripMenuItem";
+      this.treeVewToolStripMenuItem.Size = new System.Drawing.Size(127, 22);
+      this.treeVewToolStripMenuItem.Text = "&TreeVew";
+      this.treeVewToolStripMenuItem.Click += new System.EventHandler(this.treeVewToolStripMenuItem_Click);
       // 
       // helpToolStripMenuItem
       // 
@@ -179,13 +247,13 @@
       // 
       // rchTxtContent
       // 
-      this.rchTxtContent.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                    | System.Windows.Forms.AnchorStyles.Left)
-                    | System.Windows.Forms.AnchorStyles.Right)));
+      this.rchTxtContent.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.rchTxtContent.BackColor = System.Drawing.SystemColors.Window;
       this.rchTxtContent.Location = new System.Drawing.Point(3, 3);
       this.rchTxtContent.Name = "rchTxtContent";
-      this.rchTxtContent.Size = new System.Drawing.Size(544, 409);
+      this.rchTxtContent.Size = new System.Drawing.Size(547, 409);
       this.rchTxtContent.TabIndex = 3;
       this.rchTxtContent.Text = "";
       // 
@@ -257,6 +325,7 @@
       // 
       // btnTranslate
       // 
+      this.btnTranslate.ContextMenuStrip = this.translateContextMenuStrip;
       this.btnTranslate.Location = new System.Drawing.Point(743, 1);
       this.btnTranslate.Name = "btnTranslate";
       this.btnTranslate.Size = new System.Drawing.Size(75, 23);
@@ -265,19 +334,45 @@
       this.btnTranslate.UseVisualStyleBackColor = true;
       this.btnTranslate.Click += new System.EventHandler(this.btnTranslate_Click);
       // 
+      // translateContextMenuStrip
+      // 
+      this.translateContextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.googleTranslatorToolStripMenuItem,
+            this.microsoftTranslatorToolStripMenuItem});
+      this.translateContextMenuStrip.Name = "translateContextMenuStrip";
+      this.translateContextMenuStrip.Size = new System.Drawing.Size(182, 48);
+      // 
+      // googleTranslatorToolStripMenuItem
+      // 
+      this.googleTranslatorToolStripMenuItem.Checked = true;
+      this.googleTranslatorToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
+      this.googleTranslatorToolStripMenuItem.Name = "googleTranslatorToolStripMenuItem";
+      this.googleTranslatorToolStripMenuItem.Size = new System.Drawing.Size(181, 22);
+      this.googleTranslatorToolStripMenuItem.Text = "Google Translator";
+      this.googleTranslatorToolStripMenuItem.Click += new System.EventHandler(this.googleTranslatorToolStripMenuItem_Click);
+      // 
+      // microsoftTranslatorToolStripMenuItem
+      // 
+      this.microsoftTranslatorToolStripMenuItem.Name = "microsoftTranslatorToolStripMenuItem";
+      this.microsoftTranslatorToolStripMenuItem.Size = new System.Drawing.Size(181, 22);
+      this.microsoftTranslatorToolStripMenuItem.Text = "Microsoft Translator";
+      this.microsoftTranslatorToolStripMenuItem.Click += new System.EventHandler(this.microsoftTranslatorToolStripMenuItem_Click);
+      // 
       // cbxTranslate
       // 
+      this.cbxTranslate.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.cbxTranslate.FormattingEnabled = true;
       this.cbxTranslate.Location = new System.Drawing.Point(589, 3);
       this.cbxTranslate.Name = "cbxTranslate";
       this.cbxTranslate.Size = new System.Drawing.Size(148, 21);
+      this.cbxTranslate.Sorted = true;
       this.cbxTranslate.TabIndex = 13;
       // 
       // splitContainer1
       // 
-      this.splitContainer1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.splitContainer1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.splitContainer1.Location = new System.Drawing.Point(0, 27);
       this.splitContainer1.Name = "splitContainer1";
       // 
@@ -290,6 +385,7 @@
       this.splitContainer1.Panel2.Controls.Add(this.rchTxtContent);
       this.splitContainer1.Size = new System.Drawing.Size(830, 421);
       this.splitContainer1.SplitterDistance = 276;
+      this.splitContainer1.SplitterWidth = 1;
       this.splitContainer1.TabIndex = 14;
       // 
       // saveFileDialog1
@@ -319,10 +415,10 @@
       this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
       this.menuStrip1.ResumeLayout(false);
       this.menuStrip1.PerformLayout();
+      this.translateContextMenuStrip.ResumeLayout(false);
       this.splitContainer1.Panel1.ResumeLayout(false);
       this.splitContainer1.Panel2.ResumeLayout(false);
       ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
-      this.ResumeLayout(false);
       this.splitContainer1.ResumeLayout(false);
       this.ResumeLayout(false);
       this.PerformLayout();
@@ -353,6 +449,15 @@
     private System.Windows.Forms.ComboBox cbxTranslate;
     private System.Windows.Forms.SplitContainer splitContainer1;
     private System.Windows.Forms.SaveFileDialog saveFileDialog1;
+    private System.Windows.Forms.ToolStripMenuItem treeVewToolStripMenuItem;
+    private System.Windows.Forms.ContextMenuStrip translateContextMenuStrip;
+    private System.Windows.Forms.ToolStripMenuItem googleTranslatorToolStripMenuItem;
+    private System.Windows.Forms.ToolStripMenuItem microsoftTranslatorToolStripMenuItem;
+    private System.Windows.Forms.ToolStripMenuItem cutToolStripMenuItem;
+    private System.Windows.Forms.ToolStripMenuItem copytToolStripMenuItem;
+    private System.Windows.Forms.ToolStripMenuItem pasteToolStripMenuItem;
+    private System.Windows.Forms.ToolStripMenuItem deleteToolStripMenuItem;
+    private System.Windows.Forms.ToolStripMenuItem selectAllToolStripMenuItem;
     
   }
 }

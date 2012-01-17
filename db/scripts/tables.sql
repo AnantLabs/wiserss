@@ -54,7 +54,7 @@ CREATE TABLE rss_items (
   source TEXT COMMENT 'The RSS channel that the item came from',
   publication_date DATETIME COMMENT 'Indicates when the item was published',
   title TEXT NOT NULL COMMENT 'The title of the item',
-  favorite BIT COMMENT 'Specifies if the item is marked as favorite (1=favorite)',
+  favorite TINYINT(1) COMMENT 'Specifies if the item is marked as favorite (1=favorite)',
   PRIMARY KEY (id),
   INDEX item_idx(id),
   INDEX channel_idx(channel_id),

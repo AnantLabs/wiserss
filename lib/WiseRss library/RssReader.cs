@@ -62,6 +62,7 @@ namespace Rss
     private RssCategory category = null;
     private RssItem item = null;
     private string feedUrl = string.Empty;
+    private string originalLink = string.Empty;
 
     private void InitReader()
     {
@@ -576,8 +577,8 @@ namespace Rss
                       case "link":
                         try
                         {
+                          channel.OriginalLink = elementText.ToString();
                           channel.Link = new Uri(feedUrl);
-                          //channel.Link = new Uri(elementText.ToString());
                         }
                         catch (Exception e)
                         {
